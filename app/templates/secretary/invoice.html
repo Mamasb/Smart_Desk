@@ -2,17 +2,102 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Invoice for {{ student.first_name }} {{ student.family_name }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fee Structure - {{ student.first_name }} {{ student.family_name }}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        .invoice-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .invoice-header img {
+            max-width: 100px;
+        }
+        .invoice-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .table {
+            margin-bottom: 0;
+        }
+        .payment-options {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Invoice for {{ student.first_name }} {{ student.family_name }}</h1>
-    <p>Grade: {{ student.grade }}</p>
-    <p>Food: {% if student.food %}Yes{% else %}No{% endif %}</p>
-    <p>Text Books Fee: {{ student.text_books_fee }}</p>
-    <p>Exercise Books Fee: {{ student.exercise_books_fee }}</p>
-    <p>Transport Fee: {{ student.transport_fee }}</p>
-    <p>Total Fee: {{ total_fee }}</p>
-    <p>Fees Paid: {{ student.fees_paid }}</p>
-    <p>Balance: {{ student.balance }}</p>
+    <div class="container mt-4">
+        <!-- Invoice Header -->
+        <div class="invoice-header">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="School Logo">
+            <h1 class="invoice-title">Fee Structure</h1>
+            <p class="text-muted">For: {{ student.first_name }} {{ student.family_name }}</p>
+        </div>
+
+        <!-- Student Details -->
+        <div class="mb-4">
+            <p><strong>Grade:</strong> {{ student.grade }}</p>
+            <p><strong>Admission Number:</strong> {{ student.admission_number }}</p>
+        </div>
+
+        <!-- Fee Breakdown Table -->
+        <table class="table table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th>Item</th>
+                    <th>Amount ({{ currency_symbol }})</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Text Books Fee</td>
+                    <td>{{ student.text_books_fee }}</td>
+                </tr>
+                <tr>
+                    <td>Exercise Books Fee</td>
+                    <td>{{ student.exercise_books_fee }}</td>
+                </tr>
+                <tr>
+                    <td>Transport Fee</td>
+                    <td>{{ student.transport_fee }}</td>
+                </tr>
+                <tr>
+                    <td>Food</td>
+                    <td>{% if student.food %}{{ food_fee }}{% else %}0{% endif %}</td>
+                </tr>
+                <tr class="table-primary">
+                    <td><strong>Total Fee</strong></td>
+                    <td><strong>{{ total_fee }}</strong></td>
+                </tr>
+                <tr>
+                    <td>Fees Paid</td>
+                    <td>{{ student.fees_paid }}</td>
+                </tr>
+                <tr class="table-warning">
+                    <td><strong>Balance</strong></td>
+                    <td><strong>{{ student.balance }}</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Payment Methods -->
+        <div class="payment-options mt-4">
+            <h4>Payment Methods</h4>
+            <p>You can complete the payment using one of the following methods:</p>
+            <ul>
+                <li><strong>Online Payment:</strong> <a href="{{ payment_url }}" class="btn btn-success btn-sm">Pay Now</a></li>
+                <li><strong>Bank Transfer:</strong> Account Name: <strong>XYZ School</strong>, Account Number: <strong>123456789</strong></li>
+                <li><strong>Cash:</strong> Pay directly at the school office.</li>
+            </ul>
+        </div>
+
+        <!-- Invoice Actions -->
+        <div class="mt-4">
+            <a href="#" class="btn btn-primary" onclick="window.print()">Print Invoice</a>
+            <a href="{{ url_for('main_bp.download_invoice', student_id=student.id) }}" class="btn btn-secondary">Download PDF</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

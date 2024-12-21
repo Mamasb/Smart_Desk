@@ -9,8 +9,9 @@
         {% if messages %}
             <div class="alert-container">
                 {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
                         {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 {% endfor %}
             </div>
@@ -20,73 +21,80 @@
     <!-- Add Student Button -->
     <a href="{{ url_for('main_bp.add_student') }}" class="btn btn-primary mb-3">Add Student</a>
 
-    <!-- Search Form -->
-    <form method="POST" action="{{ url_for('main_bp.manage_students') }}">
-        <input type="text" name="search_query" placeholder="Search by Admission No, Name..." class="form-control">
-        <button type="submit" class="btn btn-secondary mt-2">Search</button>
-    </form>
+    <!-- Search and Filter Form -->
+    <form method="POST" action="{{ url_for('main_bp.manage_students') }}" class="row g-3">
+        <div class="col-md-6">
+            <input 
+                type="text" 
+                name="search_query" 
+                placeholder="Search by Admission No, Name..." 
+                class="form-control" 
+                value="{{ search_query|default('') }}"
+                aria-label="Search by Admission No, Name...">
+        </div>
+        <div class="col-md-4">
+            <select name="grade" class="form-select" aria-label="Select Grade">
+             <option value="">Select Grades</option>
+                  {% for grade in grades %}
+             <option value="{{ grade }}" {% if grade == grade_filter %}selected{% endif %}>{{ grade }}</option>
+                  {% endfor %}
+</select>
 
-    <!-- Grade Filter Form -->
-    <form method="GET" action="{{ url_for('main_bp.manage_students') }}" class="mt-3">
-        <select name="grade" class="form-control">
-            <option value="">Select Grade</option>
-            {% for grade in grades %}
-                <option value="{{ grade }}" {% if grade == grade_filter %}selected{% endif %}>{{ grade }}</option>
-            {% endfor %}
-        </select>
-        <button type="submit" class="btn btn-secondary mt-2">Filter</button>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-secondary w-100">Search & Filter</button>
+        </div>
     </form>
 
     <!-- Student Table -->
-    <table class="table mt-4">
-        <thead>
-            <tr>
-                <th>Admission Number</th>
-                <th>Full Name</th>
-                <th>Grade</th>
-                <th>Fees Paid</th>
-                <th>Balance</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for student in students %}
-            <tr>
-                <td>{{ student.admission_number }}</td>
-                <td>{{ student.first_name }} {{ student.middle_name }} {{ student.family_name }}</td>
-                <td>{{ student.grade }}</td>
-                <td>{{ student.fees_paid }}</td>
-                <td>{{ student.balance }}</td>
-                <td>
-                    <a href="{{ url_for('main_bp.edit_student', student_id=student.id) }}" class="btn btn-warning">Edit</a>
-                    <form action="{{ url_for('main_bp.delete_student', student_id=student.id) }}" method="POST" style="display:inline;" onsubmit="return confirmDelete()">
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form>
-                    <a href="{{ url_for('main_bp.generate_invoice', student_id=student.id) }}" class="btn btn-info" target="_blank">Generate Invoice</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-responsive mt-4">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Admission Number</th>
+                    <th>Full Name</th>
+                    <th>Grade</th>
+                    <th>Fees Paid</th>
+                    <th>Balance</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if students %}
+                    {% for student in students %}
+                    <tr>
+                        <td>{{ student.admission_number }}</td>
+                        <td>{{ student.first_name }} {{ student.middle_name }} {{ student.family_name }}</td>
+                        <td>{{ student.grade }}</td>
+                        <td>{{ student.fees_paid }}</td>
+                        <td>{{ student.balance }}</td>
+                        <td>
+                            <a href="{{ url_for('main_bp.edit_student', student_id=student.id) }}" class="btn btn-warning btn-sm">Edit</a>
+                            <form action="{{ url_for('main_bp.delete_student', student_id=student.id) }}" method="POST" style="display:inline;" onsubmit="return confirmDelete()">
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                            <a href="{{ url_for('main_bp.generate_invoice', student_id=student.id) }}" class="btn btn-info btn-sm" target="_blank">Invoice</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center">No students found.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <script>
     function confirmDelete() {
-        // First confirmation - Warning message
         const firstConfirmation = confirm("Are you sure you want to delete this student? This action is irreversible.");
-        
         if (firstConfirmation) {
-            // Second confirmation - Final decision prompt
             const secondConfirmation = confirm("Are you absolutely sure? This cannot be undone.");
-            
-            if (secondConfirmation) {
-                return true;  // Proceed with deletion
-            } else {
-                return false;  // Cancel deletion
-            }
-        } else {
-            return false;  // Cancel deletion
+            return secondConfirmation;
         }
+        return false;
     }
 </script>
 {% endblock %}
