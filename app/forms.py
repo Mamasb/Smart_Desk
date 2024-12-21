@@ -5,8 +5,8 @@ from wtforms.validators import DataRequired
 class StudentForm(FlaskForm):
     # Personal Information Fields
     first_name = StringField('First Name', validators=[DataRequired()])
-    middle_name = StringField('Middle Name')
-    family_name = StringField('Family Name', validators=[DataRequired()])
+    middle_name = StringField('Middle Name', validators=[DataRequired()])
+    family_name = StringField('Family Name')
     
     # Grade Selection
     grade = SelectField('Grade', choices=[

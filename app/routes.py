@@ -149,6 +149,7 @@ def manage_students():
     return render_template('secretary/manage_students.html', students=students, grades=grades, grade_filter=grade_filter)
 
 # Route for deleting a student
+# Route for deleting a student
 @main_bp.route('/secretary/delete_student/<int:student_id>', methods=['POST'])
 def delete_student(student_id):
     student = Student.query.get_or_404(student_id)
@@ -157,7 +158,7 @@ def delete_student(student_id):
         db.session.commit()
         flash("Student successfully deleted!", "success")
     except Exception as e:
-        db.session.rollback()
+        db.session.rollback()  # Rollback in case of error
         flash("An error occurred while deleting the student. Please try again.", "danger")
-
+    
     return redirect(url_for('main_bp.manage_students'))

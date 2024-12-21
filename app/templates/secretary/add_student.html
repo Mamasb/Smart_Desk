@@ -13,43 +13,54 @@
             <a href="{{ url_for('main_bp.add_student') }}" class="btn btn-primary custom-btn">Add Another Student</a>
         </div>
     {% else %}
-        <form method="POST" action="{{ url_for('main_bp.add_student') }}">
+        <form method="POST" action="{{ url_for('main_bp.add_student') }}" class="form-styling">
             {{ form.hidden_tag() }}
 
-            <!-- Student Details -->
-            <div class="form-group">
-                <label for="first_name">{{ form.first_name.label }}</label>
-                {{ form.first_name(size=32, class="form-control", required=True) }}
+            <!-- Name Fields: First, Middle, and Last Name in One Line -->
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="first_name">{{ form.first_name.label }}</label>
+                    {{ form.first_name(size=32, class="form-control", required=True) }}
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="middle_name">{{ form.middle_name.label }}</label>
+                    {{ form.middle_name(size=32, class="form-control", required=True) }}
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="family_name">{{ form.family_name.label }}</label>
+                    {{ form.family_name(size=32, class="form-control") }}
+                </div>
             </div>
-            <div class="form-group">
-                <label for="middle_name">{{ form.middle_name.label }}</label>
-                {{ form.middle_name(size=32, class="form-control") }}
-            </div>
-            <div class="form-group">
-                <label for="family_name">{{ form.family_name.label }}</label>
-                {{ form.family_name(size=32, class="form-control", required=True) }}
-            </div>
+
+            <!-- Grade Field -->
             <div class="form-group">
                 <label for="grade">{{ form.grade.label }}</label>
                 {{ form.grade(class="form-control", required=True) }}
             </div>
 
-            <!-- Optional Fees -->
+            <!-- Collapsible Optional Fees -->
             <div class="form-group">
-                <label for="food">{{ form.food.label }}</label>
-                {{ form.food() }}
+                <button class="btn-link" type="button" data-toggle="collapse" data-target="#optional-fees" aria-expanded="false" aria-controls="optional-fees">
+                    Toggle Optional Fees
+                </button>
             </div>
-            <div class="form-group">
-                <label for="text_books_fee">{{ form.text_books_fee.label }}</label>
-                {{ form.text_books_fee() }}
-            </div>
-            <div class="form-group">
-                <label for="exercise_books_fee">{{ form.exercise_books_fee.label }}</label>
-                {{ form.exercise_books_fee() }}
-            </div>
-            <div class="form-group">
-                <label for="assesment_tool_fee">{{ form.assesment_tool_fee.label }}</label>
-                {{ form.assesment_tool_fee() }}
+            <div class="collapse" id="optional-fees">
+                <div class="form-group">
+                    <label for="food">{{ form.food.label }}</label>
+                    {{ form.food() }}
+                </div>
+                <div class="form-group">
+                    <label for="text_books_fee">{{ form.text_books_fee.label }}</label>
+                    {{ form.text_books_fee() }}
+                </div>
+                <div class="form-group">
+                    <label for="exercise_books_fee">{{ form.exercise_books_fee.label }}</label>
+                    {{ form.exercise_books_fee() }}
+                </div>
+                <div class="form-group">
+                    <label for="assesment_tool_fee">{{ form.assesment_tool_fee.label }}</label>
+                    {{ form.assesment_tool_fee() }}
+                </div>
             </div>
 
             <!-- Transport Mode -->
@@ -59,7 +70,7 @@
             </div>
 
             <!-- Fee Breakdown -->
-            <h4>Fee Breakdown</h4>
+            <h4 class="mt-4">Fee Breakdown</h4>
             <ul id="fee-breakdown">
                 <li>Tuition Fee: Ksh <span id="grade-fee">0</span></li>
                 <li>Food: Ksh <span id="food-fee">0</span></li>
@@ -76,9 +87,8 @@
             <h4>Total Fees: Ksh <span id="total">0</span></h4>
 
             <div class="form-group">
-                <button type="submit" class="btn btn-primary custom-btn">Add Student</button>
-                <button type="button" class="btn btn-danger custom-btn" id="delete-button">Cancel</button>
-                <button type="button" class="btn btn-success custom-btn" id="generate-invoice">Generate Invoice</button>
+                <button type="submit" class="btn custom-btn">Add Student</button>
+                <button type="button" class="btn custom-btn-danger" id="delete-button" onclick="window.history.back();">Cancel</button>
             </div>
         </form>
     {% endif %}
@@ -174,32 +184,23 @@
             document.getElementById("exercise-books-fee").textContent = "0";
         }
 
-        if (document.getElementById("{{ form.assesment_tool_fee.id }}").checked) {
-            total += optionalFees.assesment_tool_fee;
-            document.getElementById("assessment-tools-fee").textContent = optionalFees.assesment_tool_fee;
-        } else {
-            document.getElementById("assessment-tools-fee").textContent = "0";
-        }
-
         // Transport fee
         const transportMode = document.getElementById("{{ form.transport_mode.id }}").value;
         const transportFee = transportFees[transportMode] || 0;
         total += transportFee;
         document.getElementById("transport-fee").textContent = transportFee;
 
-        // Calculate the total
+        // Update total
         document.getElementById("total").textContent = total;
     }
 
-    // Event listeners to update total when user changes values
+    // Call updateTotal() on page load and whenever a field changes
+    document.addEventListener("DOMContentLoaded", updateTotal);
     document.getElementById("{{ form.grade.id }}").addEventListener("change", updateTotal);
     document.getElementById("{{ form.food.id }}").addEventListener("change", updateTotal);
     document.getElementById("{{ form.text_books_fee.id }}").addEventListener("change", updateTotal);
     document.getElementById("{{ form.exercise_books_fee.id }}").addEventListener("change", updateTotal);
-    document.getElementById("{{ form.assesment_tool_fee.id }}").addEventListener("change", updateTotal);
     document.getElementById("{{ form.transport_mode.id }}").addEventListener("change", updateTotal);
-
-    // Initialize fee breakdown on page load
-    updateTotal();
 </script>
+
 {% endblock %}

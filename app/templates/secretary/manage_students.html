@@ -59,7 +59,7 @@
                 <td>{{ student.balance }}</td>
                 <td>
                     <a href="{{ url_for('main_bp.edit_student', student_id=student.id) }}" class="btn btn-warning">Edit</a>
-                    <form action="{{ url_for('main_bp.delete_student', student_id=student.id) }}" method="POST" style="display:inline;">
+                    <form action="{{ url_for('main_bp.delete_student', student_id=student.id) }}" method="POST" style="display:inline;" onsubmit="return confirmDelete()">
                         <button type="submit" class="btn btn-danger">Delete</button>
                     </form>
                     <a href="{{ url_for('main_bp.generate_invoice', student_id=student.id) }}" class="btn btn-info" target="_blank">Generate Invoice</a>
@@ -69,4 +69,24 @@
         </tbody>
     </table>
 </div>
+
+<script>
+    function confirmDelete() {
+        // First confirmation - Warning message
+        const firstConfirmation = confirm("Are you sure you want to delete this student? This action is irreversible.");
+        
+        if (firstConfirmation) {
+            // Second confirmation - Final decision prompt
+            const secondConfirmation = confirm("Are you absolutely sure? This cannot be undone.");
+            
+            if (secondConfirmation) {
+                return true;  // Proceed with deletion
+            } else {
+                return false;  // Cancel deletion
+            }
+        } else {
+            return false;  // Cancel deletion
+        }
+    }
+</script>
 {% endblock %}
