@@ -3,7 +3,20 @@
 {% block content %}
 <div class="container mt-5">
     <h2>Manage Students</h2>
-    
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="alert-container">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
     <!-- Add Student Button -->
     <a href="{{ url_for('main_bp.add_student') }}" class="btn btn-primary mb-3">Add Student</a>
 
