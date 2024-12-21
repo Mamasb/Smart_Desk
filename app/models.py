@@ -53,8 +53,15 @@ class Student(db.Model):
     def generate_admission_number():
         last_student = Student.query.order_by(Student.id.desc()).first()
         if last_student:
-            last_number = int(last_student.admission_number[3:])  # Extract the number part of the admission number
-            new_number = f"AJA{last_number + 1:02d}"  # Increment the admission number
+            try:
+                # Attempt to extract the numeric part from the admission number
+                last_number = ''.join(filter(str.isdigit, last_student.admission_number))  # Extract digits only
+                if last_number.isdigit():
+                    new_number = f"AJA{int(last_number) + 1:02d}"  # Increment the numeric part
+                else:
+                    new_number = "AJA01"  # Default to "AJA01" if parsing fails
+            except Exception as e:
+                new_number = "AJA01"  # If any error occurs, start from "AJA01"
         else:
             new_number = "AJA01"  # First admission number
         return new_number
@@ -99,4 +106,7 @@ class Student(db.Model):
         return total  # Returning the total fee for later use
 
     def __repr__(self):
-        return f"<Student {self.first_name} {self.family_name}>"
+        middle_name = self.middle_name if self.middle_name else ""  # Use an empty string if middle name is None
+        return f"<Student {self.first_name} {middle_name} {self.family_name}>"
+
+# Add any other necessary classes like Transport, PaymentHistory, etc., if required
