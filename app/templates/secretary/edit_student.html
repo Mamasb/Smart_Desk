@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Edit Student Details</h2>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        
+        <!-- Name and Grade -->
+        <div class="form-group">
+            <label for="first_name">First Name</label>
+            {{ form.first_name(class="form-control", value=student.first_name) }}
+        </div>
+        <div class="form-group">
+            <label for="middle_name">Middle Name</label>
+            {{ form.middle_name(class="form-control", value=student.middle_name) }}
+        </div>
+        <div class="form-group">
+            <label for="family_name">Family Name</label>
+            {{ form.family_name(class="form-control", value=student.family_name) }}
+        </div>
+        <div class="form-group">
+            <label for="grade">Grade</label>
+            {{ form.grade(class="form-control", value=student.grade) }}
+        </div>
+
+        <!-- Fee Details -->
+        <div class="form-group">
+            <h4>Optional Fees</h4>
+            <div>
+                <input type="checkbox" id="food" name="food" {% if student.food %} checked {% endif %}> Food - Ksh 3500<br>
+                <input type="checkbox" id="text_books_fee" name="text_books_fee" {% if student.text_books_fee %} checked {% endif %}> Text Books - Ksh 6000<br>
+                <input type="checkbox" id="exercise_books_fee" name="exercise_books_fee" {% if student.exercise_books_fee %} checked {% endif %}> Exercise Books - Ksh 500 (termly)<br>
+                <input type="checkbox" id="assesment_tool_fee" name="assesment_tool_fee" {% if student.assesment_tool_fee %} checked {% endif %}> Assessment Tools - Ksh 300<br>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <h4>Transport</h4>
+            <select class="form-control" id="transport_mode" name="transport_mode">
+                <option value="None" {% if student.transport_mode == 'None' %} selected {% endif %}>None - Ksh 0</option>
+                <option value="OneWay" {% if student.transport_mode == 'OneWay' %} selected {% endif %}>One-Way - Ksh 4500</option>
+                <option value="TwoWayTown" {% if student.transport_mode == 'TwoWayTown' %} selected {% endif %}>Two-Way (Town) - Ksh 7000</option>
+                <option value="TwoWayUma" {% if student.transport_mode == 'TwoWayUma' %} selected {% endif %}>Two-Way (Uma) - Ksh 8000</option>
+            </select>
+        </div>
+
+        <!-- Fee Breakdown -->
+        <h4>Fee Breakdown</h4>
+        <ul id="fee-breakdown">
+            <li>Tuition Fee: Ksh <span id="grade-fee">{{ student.grade_fee }}</span></li>
+            <li>Food: Ksh <span id="food-fee">{{ student.food_fee }}</span></li>
+            <li>Text Books: Ksh <span id="text-books-fee">{{ student.text_books_fee }}</span></li>
+            <li>Exercise Books: Ksh <span id="exercise-books-fee">{{ student.exercise_books_fee }}</span></li>
+            <li>Assessment Tools: Ksh <span id="assessment-tools-fee">{{ student.assesment_tool_fee }}</span></li>
+            <li>Transport: Ksh <span id="transport-fee">{{ student.transport_fee }}</span></li>
+            <li>Activity Fee: Ksh <span id="activity-fee">{{ student.activity_fee }}</span></li>
+            <li>Diary Fee: Ksh <span id="diary-fee">{{ student.diary_fee }}</span></li>
+            <li>Admission Fee: Ksh <span id="admission-fee">{{ student.admission_fee }}</span></li>
+        </ul>
+
+        <!-- Total Fees -->
+        <h4>Total Fees: Ksh <span id="total">{{ student.total_fee }}</span></h4>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary custom-btn">Save Changes</button>
+            <button type="button" class="btn btn-danger custom-btn" id="delete-button">Delete</button>
+            <button type="button" class="btn btn-success custom-btn" id="generate-invoice">Generate Invoice</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Fee structure
+    const gradeFees = {
+        "Playgroup": 6500,
+        "PP1": 6500,
+        "PP2": 6500,
+        "Grade1": 8500,
+        "Grade2": 8500,
+        "Grade3": 8500,
+        "Grade4": 9000,
+        "Grade5": 9000,
+        "Grade6": 9000,
+        "Grade7": 12000,
+        "Grade8": 12000,
+        "Grade9": 12000,
+    };
+
+    const optionalFees = {
+        "food": 3500,
+        "text_books_fee": 6000,
+        "exercise_books_fee": 500, // termly
+        "assesment_tool_fee": 300
+    };
+
+    const transportFees = {
+        "None": 0,
+        "OneWay": 4500,
+        "TwoWayTown": 7000,
+        "TwoWayUma": 8000
+    };
+
+    const defaultFees = {
+        "activity_fee": 200,
+        "diary_fee": 100,
+        "admission_fee": 1000,  // Playgroup students
+        "assesment_tool_fee": 300 // Default for PP1 to Grade 4
+    };
+
+    // Function to calculate and update the total fees
+    function updateTotal() {
+        let total = 0;
+        
+        // Get grade and base fee
+        const gradeSelect = document.getElementById("{{ form.grade.id }}");
+        const grade = gradeSelect.value;
+        const gradeFee = gradeFees[grade] || 0;
+        total += gradeFee;
+
+        // Update the breakdown for grade fee
+        document.getElementById("grade-fee").textContent = gradeFee;
+
+        // Add default fees for PP1 to Grade 4
+        if (grade === "Playgroup") {
+            total += defaultFees.activity_fee;
+            document.getElementById("activity-fee").textContent = defaultFees.activity_fee;
+
+            total += defaultFees.diary_fee;
+            document.getElementById("diary-fee").textContent = defaultFees.diary_fee;
+
+            total += defaultFees.admission_fee;
+            document.getElementById("admission-fee").textContent = defaultFees.admission_fee;
+
+            total += defaultFees.assesment_tool_fee;
+            document.getElementById("assessment-tools-fee").textContent = defaultFees.assesment_tool_fee;
+        } else {
+            document.getElementById("admission-fee").textContent = 0;
+            document.getElementById("assessment-tools-fee").textContent = 0;
+        }
+
+        // Add selected optional fees and update breakdown
+        const foodFee = document.getElementById("food").checked ? optionalFees["food"] : 0;
+        total += foodFee;
+        document.getElementById("food-fee").textContent = foodFee;
+
+        const textBooksFee = (grade === "Grade1" || grade === "Grade2" || grade === "Grade3" || grade === "Grade4" || grade === "Grade5" || grade === "Grade6" || grade === "Grade7" || grade === "Grade8" || grade === "Grade9") && document.getElementById("text_books_fee").checked ? optionalFees["text_books_fee"] : 0;
+        total += textBooksFee;
+        document.getElementById("text-books-fee").textContent = textBooksFee;
+
+        const exerciseBooksFee = document.getElementById("exercise_books_fee").checked ? optionalFees["exercise_books_fee"] : 0;
+        total += exerciseBooksFee;
+        document.getElementById("exercise-books-fee").textContent = exerciseBooksFee;
+
+        const assessmentToolsFee = (grade === "PP1" || grade === "PP2" || grade === "Grade1" || grade === "Grade2" || grade === "Grade3" || grade === "Grade4") && document.getElementById("assesment_tool_fee").checked ? optionalFees["assesment_tool_fee"] : 0;
+        total += assessmentToolsFee;
+        document.getElementById("assessment-tools-fee").textContent = assessmentToolsFee;
+
+        // Add selected transport fee and update breakdown
+        const transportSelect = document.getElementById("transport_mode");
+        const transportFee = transportFees[transportSelect.value];
+        total += transportFee;
+        document.getElementById("transport-fee").textContent = transportFee;
+
+        // Update the total fee in the HTML
+        document.getElementById("total").textContent = total;
+    }
+
+    // Event listeners to recalculate on changes
+    document.querySelectorAll('input[type="checkbox"], select').forEach(function (el) {
+        el.addEventListener('change', updateTotal);
+    });
+
+    // Run the calculation initially
+    updateTotal();
+</script>
+{% endblock %}

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice for {{ student.first_name }} {{ student.family_name }}</title>
+</head>
+<body>
+    <h1>Invoice for {{ student.first_name }} {{ student.family_name }}</h1>
+    <p>Grade: {{ student.grade }}</p>
+    <p>Food: {% if student.food %}Yes{% else %}No{% endif %}</p>
+    <p>Text Books Fee: {{ student.text_books_fee }}</p>
+    <p>Exercise Books Fee: {{ student.exercise_books_fee }}</p>
+    <p>Transport Fee: {{ student.transport_fee }}</p>
+    <p>Total Fee: {{ total_fee }}</p>
+    <p>Fees Paid: {{ student.fees_paid }}</p>
+    <p>Balance: {{ student.balance }}</p>
+</body>
+</html>

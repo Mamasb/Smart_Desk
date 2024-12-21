@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Student Management System{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/secretary/secretary_dashboard">Secretary Dashboard</a>
+            <a href="/student/student_portal">Student Portal</a>
+            <a href="/secretary/manage_students">Manage Students</a> <!-- New link for student management -->
+            <a href="/secretary/add_student">Add Student</a> <!-- New link for adding students -->
+            <a href="/secretary/student_invoices">View Invoices</a> <!-- New link for student invoices -->
+        </nav>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        <p>&copy; 2024 Student Management System</p>
+    </footer>
+</body>
+</html>
