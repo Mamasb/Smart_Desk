@@ -159,6 +159,35 @@ h4 + ul#fee-breakdown {
     margin-bottom: 10px;
 }
 
+.invoice .total {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--secondary-color);
+    margin-top: 20px;
+}
+
+/* Download Invoice Button */
+.download-invoice-btn {
+    background-color: var(--primary-color);
+    color: var(--accent-color);
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.download-invoice-btn:hover {
+    background-color: #0050b3;
+}
+
+.download-invoice-btn:active {
+    background-color: #003366;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .container {

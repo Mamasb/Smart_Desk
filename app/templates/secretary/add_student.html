@@ -9,14 +9,14 @@
             Student successfully added to the database!
         </div>
         <div class="form-group">
-            <a href="{{ url_for('main_bp.edit_student', student_id=student.id) }}" class="btn btn-success custom-btn">View Student</a>
-            <a href="{{ url_for('main_bp.add_student') }}" class="btn btn-primary custom-btn">Add Another Student</a>
+            <a href="{{ url_for('main_bp.edit_student', student_id=student.id) }}" class="btn btn-success">View Student</a>
+            <a href="{{ url_for('main_bp.add_student') }}" class="btn btn-primary">Add Another Student</a>
         </div>
     {% else %}
         <form method="POST" action="{{ url_for('main_bp.add_student') }}" class="form-styling">
             {{ form.hidden_tag() }}
 
-            <!-- Name Fields: First, Middle, and Last Name in One Line -->
+            <!-- Name Fields -->
             <div class="form-row">
                 <div class="form-group col-md-4">
                     <label for="first_name">{{ form.first_name.label }}</label>
@@ -24,42 +24,38 @@
                 </div>
                 <div class="form-group col-md-4">
                     <label for="middle_name">{{ form.middle_name.label }}</label>
-                    {{ form.middle_name(size=32, class="form-control", required=True) }}
+                    {{ form.middle_name(size=32, class="form-control") }}
                 </div>
                 <div class="form-group col-md-4">
                     <label for="family_name">{{ form.family_name.label }}</label>
-                    {{ form.family_name(size=32, class="form-control") }}
+                    {{ form.family_name(size=32, class="form-control", required=True) }}
                 </div>
             </div>
 
-            <!-- Grade Field -->
+            <!-- Grade -->
             <div class="form-group">
                 <label for="grade">{{ form.grade.label }}</label>
                 {{ form.grade(class="form-control", required=True) }}
             </div>
 
-            <!-- Collapsible Optional Fees -->
+            <!-- Optional Fees -->
             <div class="form-group">
-                <button class="btn-link" type="button" data-toggle="collapse" data-target="#optional-fees" aria-expanded="false" aria-controls="optional-fees">
-                    Toggle Optional Fees
-                </button>
-            </div>
-            <div class="collapse" id="optional-fees">
-                <div class="form-group">
-                    <label for="food">{{ form.food.label }}</label>
-                    {{ form.food() }}
+                <label>Optional Fees</label>
+                <div class="form-check">
+                    {{ form.food(class="form-check-input") }}
+                    <label for="food" class="form-check-label">{{ form.food.label }}</label>
                 </div>
-                <div class="form-group">
-                    <label for="text_books_fee">{{ form.text_books_fee.label }}</label>
-                    {{ form.text_books_fee() }}
+                <div class="form-check">
+                    {{ form.text_books_fee(class="form-check-input") }}
+                    <label for="text_books_fee" class="form-check-label">{{ form.text_books_fee.label }}</label>
                 </div>
-                <div class="form-group">
-                    <label for="exercise_books_fee">{{ form.exercise_books_fee.label }}</label>
-                    {{ form.exercise_books_fee() }}
+                <div class="form-check">
+                    {{ form.exercise_books_fee(class="form-check-input") }}
+                    <label for="exercise_books_fee" class="form-check-label">{{ form.exercise_books_fee.label }}</label>
                 </div>
-                <div class="form-group">
-                    <label for="assesment_tool_fee">{{ form.assesment_tool_fee.label }}</label>
-                    {{ form.assesment_tool_fee() }}
+                <div class="form-check">
+                    {{ form.assesment_tool_fee(class="form-check-input") }}
+                    <label for="assesment_tool_fee" class="form-check-label">{{ form.assesment_tool_fee.label }}</label>
                 </div>
             </div>
 
@@ -74,28 +70,27 @@
             <ul id="fee-breakdown">
                 <li>Tuition Fee: Ksh <span id="grade-fee">0</span></li>
                 <li>Food: Ksh <span id="food-fee">0</span></li>
-                <li>Text Books: Ksh <span id="text-books-fee">0</span></li>
+                <li>Textbooks: Ksh <span id="text-books-fee">0</span></li>
                 <li>Exercise Books: Ksh <span id="exercise-books-fee">500</span></li>
                 <li>Assessment Tools: Ksh <span id="assessment-tools-fee">0</span></li>
                 <li>Transport: Ksh <span id="transport-fee">0</span></li>
-                <li>Activity Fee: Ksh <span id="activity-fee">0</span></li>
-                <li>Diary Fee: Ksh <span id="diary-fee">0</span></li>
+                <li>Activity Fee: Ksh <span id="activity-fee">200</span></li>
+                <li>Diary Fee: Ksh <span id="diary-fee">150</span></li>
                 <li>Admission Fee: Ksh <span id="admission-fee">0</span></li>
             </ul>
 
-            <!-- Total Fees -->
             <h4>Total Fees: Ksh <span id="total">0</span></h4>
 
+            <!-- Submit Button -->
             <div class="form-group">
-                <button type="submit" class="btn custom-btn">Add Student</button>
-                <button type="button" class="btn custom-btn-danger" id="delete-button" onclick="window.history.back();">Cancel</button>
+                <button type="submit" class="btn btn-primary">Add Student</button>
+                <button type="button" class="btn btn-danger" onclick="window.history.back();">Cancel</button>
             </div>
         </form>
     {% endif %}
 </div>
 
 <script>
-    // Fee structure
     const gradeFees = {
         "Playgroup": 6500,
         "PP1": 6500,
@@ -114,87 +109,72 @@
     const optionalFees = {
         "food": 3500,
         "text_books_fee": 6000,
-        "exercise_books_fee": 500, // termly
-        "assesment_tool_fee": 300
+        "exercise_books_fee": 500, // Default termly fee
+        "assesment_tool_fee": 300,
     };
 
     const transportFees = {
         "None": 0,
         "OneWay": 4500,
         "TwoWayTown": 7000,
-        "TwoWayUma": 8000
+        "TwoWayUma": 8000,
     };
 
     const defaultFees = {
         "activity_fee": 200,
-        "diary_fee": 100,
-        "admission_fee": 1000,  // Playgroup students
-        "assesment_tool_fee": 300 // Default for PP1 to Grade 4
+        "diary_fee": 150,
+        "admission_fee": 1000, // For Playgroup
     };
 
-    // Function to calculate and update the total fees
     function updateTotal() {
         let total = 0;
 
-        // Get grade and base fee
-        const gradeSelect = document.getElementById("{{ form.grade.id }}");
-        const grade = gradeSelect.value;
+        const grade = document.getElementById("{{ form.grade.id }}").value;
         const gradeFee = gradeFees[grade] || 0;
         total += gradeFee;
-
-        // Update the breakdown for grade fee
         document.getElementById("grade-fee").textContent = gradeFee;
 
-        // Add default fees for PP1 to Grade 4
-        if (grade === "Playgroup") {
-            total += defaultFees.activity_fee;
-            document.getElementById("activity-fee").textContent = defaultFees.activity_fee;
+        // Add optional fees
+        const isFood = document.getElementById("{{ form.food.id }}").checked;
+        const isTextBooks = document.getElementById("{{ form.text_books_fee.id }}").checked;
+        const isExerciseBooks = document.getElementById("{{ form.exercise_books_fee.id }}").checked;
+        const isAssessmentTool = document.getElementById("{{ form.assesment_tool_fee.id }}").checked;
 
-            total += defaultFees.diary_fee;
-            document.getElementById("diary-fee").textContent = defaultFees.diary_fee;
+        total += isFood ? optionalFees.food : 0;
+        document.getElementById("food-fee").textContent = isFood ? optionalFees.food : "0";
 
-            total += defaultFees.admission_fee;
-            document.getElementById("admission-fee").textContent = defaultFees.admission_fee;
+        total += isTextBooks ? optionalFees.text_books_fee : 0;
+        document.getElementById("text-books-fee").textContent = isTextBooks ? optionalFees.text_books_fee : "0";
 
-            total += defaultFees.assesment_tool_fee;
-            document.getElementById("assessment-tools-fee").textContent = defaultFees.assesment_tool_fee;
-        } else {
-            document.getElementById("admission-fee").textContent = "0";
-        }
+        total += isExerciseBooks ? optionalFees.exercise_books_fee : 0;
+        document.getElementById("exercise-books-fee").textContent = isExerciseBooks ? optionalFees.exercise_books_fee : "0";
 
-        // Optional fees (food, books, transport)
-        if (document.getElementById("{{ form.food.id }}").checked) {
-            total += optionalFees.food;
-            document.getElementById("food-fee").textContent = optionalFees.food;
-        } else {
-            document.getElementById("food-fee").textContent = "0";
-        }
+        total += isAssessmentTool ? optionalFees.assesment_tool_fee : 0;
+        document.getElementById("assessment-tools-fee").textContent = isAssessmentTool ? optionalFees.assesment_tool_fee : "0";
 
-        if (document.getElementById("{{ form.text_books_fee.id }}").checked) {
-            total += optionalFees.text_books_fee;
-            document.getElementById("text-books-fee").textContent = optionalFees.text_books_fee;
-        } else {
-            document.getElementById("text-books-fee").textContent = "0";
-        }
-
-        if (document.getElementById("{{ form.exercise_books_fee.id }}").checked) {
-            total += optionalFees.exercise_books_fee;
-            document.getElementById("exercise-books-fee").textContent = optionalFees.exercise_books_fee;
-        } else {
-            document.getElementById("exercise-books-fee").textContent = "0";
-        }
-
-        // Transport fee
+        // Transport Fee
         const transportMode = document.getElementById("{{ form.transport_mode.id }}").value;
         const transportFee = transportFees[transportMode] || 0;
         total += transportFee;
         document.getElementById("transport-fee").textContent = transportFee;
 
-        // Update total
+        // Default fees
+        total += defaultFees.activity_fee;
+        document.getElementById("activity-fee").textContent = defaultFees.activity_fee;
+
+        total += defaultFees.diary_fee;
+        document.getElementById("diary-fee").textContent = defaultFees.diary_fee;
+
+        if (grade === "Playgroup") {
+            total += defaultFees.admission_fee;
+            document.getElementById("admission-fee").textContent = defaultFees.admission_fee;
+        } else {
+            document.getElementById("admission-fee").textContent = "0";
+        }
+
         document.getElementById("total").textContent = total;
     }
 
-    // Call updateTotal() on page load and whenever a field changes
     document.addEventListener("DOMContentLoaded", updateTotal);
     document.getElementById("{{ form.grade.id }}").addEventListener("change", updateTotal);
     document.getElementById("{{ form.food.id }}").addEventListener("change", updateTotal);
@@ -202,5 +182,4 @@
     document.getElementById("{{ form.exercise_books_fee.id }}").addEventListener("change", updateTotal);
     document.getElementById("{{ form.transport_mode.id }}").addEventListener("change", updateTotal);
 </script>
-
 {% endblock %}

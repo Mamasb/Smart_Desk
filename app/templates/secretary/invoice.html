@@ -3,101 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fee Structure - {{ student.first_name }} {{ student.family_name }}</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <style>
-        .invoice-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .invoice-header img {
-            max-width: 100px;
-        }
-        .invoice-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-        .table {
-            margin-bottom: 0;
-        }
-        .payment-options {
-            margin-top: 20px;
-        }
-    </style>
+    <title>Fee Statement - {{ student.first_name }} {{ student.family_name }}</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
 </head>
 <body>
-    <div class="container mt-4">
+    <div class="invoice-container">
         <!-- Invoice Header -->
         <div class="invoice-header">
-            <img src="{{ url_for('static', filename='logo.png') }}" alt="School Logo">
-            <h1 class="invoice-title">Fee Structure</h1>
-            <p class="text-muted">For: {{ student.first_name }} {{ student.family_name }}</p>
-        </div>
-
-        <!-- Student Details -->
-        <div class="mb-4">
-            <p><strong>Grade:</strong> {{ student.grade }}</p>
+            <div class="school-info">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="School Logo" class="school-logo">
+                <h1>Adams Junior Academy</h1>
+                <p>PO Box 179-01100, Kajiado</p>
+                <p>Phone: +254 0712674789</p>
+                <p>Email: adamsjunioracademy@gmail.com</p>
+            </div>
+            <h2>Fee Statement for {{ student.first_name }} {{ student.family_name }}</h2>
             <p><strong>Admission Number:</strong> {{ student.admission_number }}</p>
+            <p><strong>Grade:</strong> {{ student.grade }}</p>
         </div>
 
-        <!-- Fee Breakdown Table -->
-        <table class="table table-bordered">
-            <thead class="table-light">
-                <tr>
-                    <th>Item</th>
-                    <th>Amount ({{ currency_symbol }})</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Text Books Fee</td>
-                    <td>{{ student.text_books_fee }}</td>
-                </tr>
-                <tr>
-                    <td>Exercise Books Fee</td>
-                    <td>{{ student.exercise_books_fee }}</td>
-                </tr>
-                <tr>
-                    <td>Transport Fee</td>
-                    <td>{{ student.transport_fee }}</td>
-                </tr>
-                <tr>
-                    <td>Food</td>
-                    <td>{% if student.food %}{{ food_fee }}{% else %}0{% endif %}</td>
-                </tr>
-                <tr class="table-primary">
-                    <td><strong>Total Fee</strong></td>
-                    <td><strong>{{ total_fee }}</strong></td>
-                </tr>
-                <tr>
-                    <td>Fees Paid</td>
-                    <td>{{ student.fees_paid }}</td>
-                </tr>
-                <tr class="table-warning">
-                    <td><strong>Balance</strong></td>
-                    <td><strong>{{ student.balance }}</strong></td>
-                </tr>
-            </tbody>
-        </table>
+        <!-- Fee Breakdown -->
+        <div class="invoice-details">
+            <h3>Fee Breakdown</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Amount (KSH)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Tuition Fee based on Grade -->
+                    <tr>
+                        <td>Tuition Fee (Grade: {{ student.grade }})</td>
+                        <td>
+                            {% if student.grade == 'Playgroup' %}
+                                6500
+                            {% elif student.grade in ['Grade1', 'Grade2', 'Grade3'] %}
+                                8500
+                            {% elif student.grade in ['Grade4', 'Grade5', 'Grade6'] %}
+                                9000
+                            {% elif student.grade in ['Grade7', 'Grade8', 'Grade9'] %}
+                                12000
+                            {% else %}
+                                0
+                            {% endif %}
+                        </td>
+                    </tr>
 
-        <!-- Payment Methods -->
-        <div class="payment-options mt-4">
-            <h4>Payment Methods</h4>
-            <p>You can complete the payment using one of the following methods:</p>
-            <ul>
-                <li><strong>Online Payment:</strong> <a href="{{ payment_url }}" class="btn btn-success btn-sm">Pay Now</a></li>
-                <li><strong>Bank Transfer:</strong> Account Name: <strong>XYZ School</strong>, Account Number: <strong>123456789</strong></li>
-                <li><strong>Cash:</strong> Pay directly at the school office.</li>
-            </ul>
+                    <!-- Optional Fees -->
+                    {% if student.food %}
+                    <tr>
+                        <td>Food</td>
+                        <td>3500</td>
+                    </tr>
+                    {% endif %}
+                    
+                    {% if student.text_books_fee %}
+                    <tr>
+                        <td>Textbooks</td>
+                        <td>6000</td>
+                    </tr>
+                    {% endif %}
+
+                    <tr>
+                        <td>Activity Fee</td>
+                        <td>200</td>
+                    </tr>
+
+                    <tr>
+                        <td>School Diary</td>
+                        <td>150</td>
+                    </tr>
+
+                    <tr>
+                        <td>Exercise Books</td>
+                        <td>{{ 1500 if student.exercise_books_fee == "yearly" else 500 }}</td>
+                    </tr>
+
+                    {% if student.grade != 'Playgroup' %}
+                    <tr>
+                        <td>Assessment Tool</td>
+                        <td>300</td>
+                    </tr>
+                    {% endif %}
+
+                    {% if student.transport_mode %}
+                    <tr>
+                        <td>Transport ({{ student.transport_mode }})</td>
+                        <td>
+                            {% if student.transport_mode == 'OneWay' %}
+                                4500
+                            {% elif student.transport_mode == 'TwoWayTown' %}
+                                7000
+                            {% elif student.transport_mode == 'TwoWayUma' %}
+                                8000
+                            {% else %}
+                                0
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endif %}
+
+                    {% if student.grade == 'Playgroup' %}
+                    <tr>
+                        <td>Admission Fee</td>
+                        <td>1000</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+
+            <!-- Total Fee Calculation -->
+            <hr>
+            <p><strong>Total Fee:</strong> KSH 
+                {% set total_fee = 0 %}
+                {% if student.grade == 'Playgroup' %}
+                    {% set total_fee = total_fee + 6500 %}
+                {% elif student.grade in ['Grade1', 'Grade2', 'Grade3'] %}
+                    {% set total_fee = total_fee + 8500 %}
+                {% elif student.grade in ['Grade4', 'Grade5', 'Grade6'] %}
+                    {% set total_fee = total_fee + 9000 %}
+                {% elif student.grade in ['Grade7', 'Grade8', 'Grade9'] %}
+                    {% set total_fee = total_fee + 12000 %}
+                {% endif %}
+                
+                {% if student.food %}
+                    {% set total_fee = total_fee + 3500 %}
+                {% endif %}
+                
+                {% if student.text_books_fee %}
+                    {% set total_fee = total_fee + 6000 %}
+                {% endif %}
+                
+                {% set total_fee = total_fee + 200 %} <!-- Activity Fee -->
+                {% set total_fee = total_fee + 150 %} <!-- School Diary -->
+                {% set total_fee = total_fee + (1500 if student.exercise_books_fee == 'yearly' else 500) %} <!-- Exercise Books -->
+                {% if student.grade != 'Playgroup' %}
+                    {% set total_fee = total_fee + 300 %} <!-- Assessment Tool -->
+                {% endif %}
+                
+                {% if student.transport_mode %}
+                    {% if student.transport_mode == 'OneWay' %}
+                        {% set total_fee = total_fee + 4500 %}
+                    {% elif student.transport_mode == 'TwoWayTown' %}
+                        {% set total_fee = total_fee + 7000 %}
+                    {% elif student.transport_mode == 'TwoWayUma' %}
+                        {% set total_fee = total_fee + 8000 %}
+                    {% endif %}
+                {% endif %}
+                
+                {% if student.grade == 'Playgroup' %}
+                    {% set total_fee = total_fee + 1000 %}
+                {% endif %}
+                
+                {{ total_fee }}
+            </p>
+
+            <!-- Balance Calculation -->
+            <p><strong>Balance:</strong> KSH {{ total_fee - (student.fees_paid or 0) }}</p>
+            <p><strong>Amount Paid:</strong> KSH {{ student.fees_paid or 0 }}</p>
+
+            <!-- Status of Payment -->
+            {% if student.fees_paid >= total_fee %}
+                <p>Status: <strong>Fully Paid</strong></p>
+            {% else %}
+                <p>Status: <strong>Outstanding</strong></p>
+            {% endif %}
         </div>
 
-        <!-- Invoice Actions -->
-        <div class="mt-4">
-            <a href="#" class="btn btn-primary" onclick="window.print()">Print Invoice</a>
-            <a href="{{ url_for('main_bp.download_invoice', student_id=student.id) }}" class="btn btn-secondary">Download PDF</a>
+        <!-- Payment Button -->
+        <div class="invoice-footer">
+            {% if total_fee - (student.fees_paid or 0) > 0 %}
+                <button onclick="window.location.href='/pay/{{ student.id }}'">Pay Now</button>
+            {% endif %}
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -34,12 +34,12 @@
         </div>
         <div class="col-md-4">
             <select name="grade" class="form-select" aria-label="Select Grade">
-             <option value="">Select Grades</option>
-                  {% for grade in grades %}
-             <option value="{{ grade }}" {% if grade == grade_filter %}selected{% endif %}>{{ grade }}</option>
-                  {% endfor %}
-</select>
-
+                <option value="">Select Grades</option>
+                <option value="all" {% if grade_filter == 'all' %}selected{% endif %}>All Grades</option>
+                {% for grade in grades %}
+                    <option value="{{ grade }}" {% if grade == grade_filter %}selected{% endif %}>{{ grade }}</option>
+                {% endfor %}
+            </select>
         </div>
         <div class="col-md-2">
             <button type="submit" class="btn btn-secondary w-100">Search & Filter</button>
@@ -56,6 +56,7 @@
                     <th>Grade</th>
                     <th>Fees Paid</th>
                     <th>Balance</th>
+                    <th>Total Fees</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -68,6 +69,7 @@
                         <td>{{ student.grade }}</td>
                         <td>{{ student.fees_paid }}</td>
                         <td>{{ student.balance }}</td>
+                        <td>{{ student.total_fees }}</td>
                         <td>
                             <a href="{{ url_for('main_bp.edit_student', student_id=student.id) }}" class="btn btn-warning btn-sm">Edit</a>
                             <form action="{{ url_for('main_bp.delete_student', student_id=student.id) }}" method="POST" style="display:inline;" onsubmit="return confirmDelete()">
@@ -79,7 +81,7 @@
                     {% endfor %}
                 {% else %}
                     <tr>
-                        <td colspan="6" class="text-center">No students found.</td>
+                        <td colspan="7" class="text-center">No students found.</td>
                     </tr>
                 {% endif %}
             </tbody>
@@ -97,4 +99,5 @@
         return false;
     }
 </script>
+
 {% endblock %}
