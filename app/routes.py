@@ -144,6 +144,7 @@ def download_invoice(student_id):
     pdf = canvas.Canvas(buffer)
     
     # Add text to the PDF
+    pdf.setFont("Helvetica", 12)
     pdf.drawString(100, 800, f"Invoice for {student.first_name} {student.family_name}")
     pdf.drawString(100, 780, f"Admission Number: {student.admission_number}")
     pdf.drawString(100, 760, f"Grade: {student.grade}")
@@ -155,6 +156,9 @@ def download_invoice(student_id):
     pdf.drawString(100, 640, f"Exercise Books Fee: {student.exercise_books_fee}")
     pdf.drawString(100, 620, f"Assessment Tool Fee: {student.assesment_tool_fee}")
     pdf.drawString(100, 600, f"Transport Mode: {student.transport_mode}")
+    
+    # Add date and time of the invoice generation
+    pdf.drawString(100, 580, f"Invoice Generated On: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
     pdf.save()
 

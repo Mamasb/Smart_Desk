@@ -39,14 +39,26 @@ body {
 }
 
 .invoice-header h1 {
-    font-size: 24px;
+    font-size: 30px;
     font-weight: bold;
+    text-align: center;
 }
 
 .invoice-header h2 {
-    font-size: 20px;
+    font-size: 18px;
     color: #333;
     margin-top: 10px;
+    text-align: center;
+}
+
+.invoice-header p {
+    text-align: center;
+    font-size: 16px; /* Adjust the font size as needed */
+}
+
+.invoice-header .school-info {
+    text-align: center;
+    font-size: 14px; /* Specific font size for the school info */
 }
 
 .student-info,
@@ -66,7 +78,8 @@ table {
     margin-top: 10px;
 }
 
-th, td {
+th,
+td {
     padding: 8px;
     text-align: left;
     border-bottom: 1px solid #ddd;
@@ -100,4 +113,48 @@ th {
     margin-top: 40px;
     font-size: 14px;
     color: #777;
+}
+
+/* Print-specific styles */
+@media print {
+    /* Hide elements not needed for printing */
+    .invoice-footer,
+    .download-invoice-btn,
+    .add-payment,
+    .student-info,
+    .invoice-header p {
+        display: none !important;
+    }
+
+    /* Adjust body styles for printing */
+    body {
+        background-color: white;
+        color: black;
+    }
+
+    /* Ensure the container uses the full width */
+    .invoice-container {
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+        border: none;
+    }
+
+    /* Remove margins on header and footer */
+    .invoice-header,
+    .invoice-footer {
+        margin: 0;
+    }
+
+    /* Adjust table styles for printing */
+    table {
+        width: 100%;
+        border: 1px solid black;
+    }
+
+    th,
+    td {
+        border: 1px solid black;
+    }
 }
