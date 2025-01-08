@@ -8,6 +8,7 @@ from reportlab.pdfgen import canvas
 from datetime import datetime
 from sqlalchemy.sql import or_
 
+# Blueprint for the main routes
 main_bp = Blueprint('main_bp', __name__)
 
 # Helper function to generate a sequential admission number
@@ -63,7 +64,7 @@ def add_student():
                 assesment_tool_fee=form.assesment_tool_fee.data,
                 transport_mode=form.transport_mode.data,
             )
-            # Calculate the total fee
+            # Calculate the total fee (ensure this method works as expected)
             student.calculate_total_fee()
 
             # Save to the database
@@ -120,7 +121,7 @@ def edit_student(student_id):
 @main_bp.route('/secretary/generate_invoice/<int:student_id>', methods=['GET'])
 def generate_invoice(student_id):
     student = get_student_by_id(student_id)
-    total_fee = student.calculate_total_fee()  # Ensure this method is calculating the fee properly
+    total_fee = student.calculate_total_fee()
     fees_paid = student.fees_paid or 0.0
     balance_due = total_fee - fees_paid
 
@@ -136,30 +137,33 @@ def generate_invoice(student_id):
 @main_bp.route('/secretary/download_invoice/<int:student_id>', methods=['GET'])
 def download_invoice(student_id):
     student = get_student_by_id(student_id)
-    total_fee = student.calculate_total_fee()  # Ensure this method is calculating the fee properly
+    total_fee = student.calculate_total_fee()
     fees_paid = student.fees_paid or 0.0
     balance_due = total_fee - fees_paid
 
     buffer = io.BytesIO()
     pdf = canvas.Canvas(buffer)
-    
+
     # Add text to the PDF
     pdf.setFont("Helvetica", 12)
     pdf.drawString(100, 800, f"Invoice for {student.first_name} {student.family_name}")
     pdf.drawString(100, 780, f"Admission Number: {student.admission_number}")
     pdf.drawString(100, 760, f"Grade: {student.grade}")
-    pdf.drawString(100, 740, f"Total Fee: {total_fee}")
-    pdf.drawString(100, 720, f"Fees Paid: {fees_paid}")
-    pdf.drawString(100, 700, f"Balance Due: {balance_due}")
-    pdf.drawString(100, 680, f"Food: {student.food}")
-    pdf.drawString(100, 660, f"Text Books Fee: {student.text_books_fee}")
-    pdf.drawString(100, 640, f"Exercise Books Fee: {student.exercise_books_fee}")
-    pdf.drawString(100, 620, f"Assessment Tool Fee: {student.assesment_tool_fee}")
-    pdf.drawString(100, 600, f"Transport Mode: {student.transport_mode}")
-    
+
+    # Breakdown of fees
+    pdf.drawString(100, 740, f"Food Fee: {student.food}")
+    pdf.drawString(100, 720, f"Text Books Fee: {student.text_books_fee}")
+    pdf.drawString(100, 700, f"Exercise Books Fee: {student.exercise_books_fee}")
+    pdf.drawString(100, 680, f"Assessment Tool Fee: {student.assesment_tool_fee}")
+    pdf.drawString(100, 660, f"Transport Fee: {student.transport_mode}")
+
+    pdf.drawString(100, 640, f"Total Fee: {total_fee}")
+    pdf.drawString(100, 620, f"Fees Paid: {fees_paid}")
+    pdf.drawString(100, 600, f"Balance Due: {balance_due}")
+
     # Add date and time of the invoice generation
     pdf.drawString(100, 580, f"Invoice Generated On: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    
+
     pdf.save()
 
     buffer.seek(0)
@@ -174,10 +178,12 @@ def manage_students():
     query = Student.query
     if search_query:
         query = query.filter(
-            (Student.admission_number.like(f'%{search_query}%')) |
-            (Student.first_name.like(f'%{search_query}%')) |
-            (Student.middle_name.like(f'%{search_query}%')) |
-            (Student.family_name.like(f'%{search_query}%'))
+            or_(
+                Student.admission_number.like(f'%{search_query}%'),
+                Student.first_name.like(f'%{search_query}%'),
+                Student.middle_name.like(f'%{search_query}%'),
+                Student.family_name.like(f'%{search_query}%')
+            )
         )
     if grade_filter:
         query = query.filter_by(grade=grade_filter)

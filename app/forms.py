@@ -44,8 +44,5 @@ class StudentForm(FlaskForm):
     # Payment Fields
     fees_paid = FloatField('Fees Paid', default=0.0)
 
-    # Balance Field (added this field)
-    balance = FloatField('Balance', default=0.0)  # Add balance field here
-
-    # Total Fee (Calculated)
-    total_fee = FloatField('Total Fee', default=0.0, render_kw={'readonly': True})
+    # Balance Field (calculated dynamically)
+    balance = FloatField('Balance', default=0.0)  # This will be computed in the route function.

@@ -6,43 +6,84 @@
     <title>Fee Statement - {{ student.first_name }} {{ student.middle_name }}</title>
     <link rel="stylesheet" type="text/css" href="/static/css/style.css">
     <style>
-        /* Styling for buttons */
+   <style>
+    /* Styling for buttons */
+    .invoice-footer button {
+        margin: 10px 5px;
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .invoice-footer button:hover {
+        background-color: #45a049;
+    }
+
+    .editable {
+        border: 1px solid #ddd;
+        padding: 5px;
+    }
+
+    /* Print-specific CSS */
+    @media print {
         .invoice-footer button {
-            margin: 10px 5px;
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .invoice-footer button:hover {
-            background-color: #45a049;
-        }
-        .editable {
-            border: 1px solid #ddd;
-            padding: 5px;
+            display: none;
         }
 
-        /* Print-specific CSS to hide buttons */
-        @media print {
-            .invoice-footer button {
-                display: none;
-            }
+        /* Prevent page breaks inside the content */
+        body, .invoice-container {
+            page-break-inside: avoid;
         }
 
-        /* Styling for the comment section */
+        /* Force content to fit the page */
+        .invoice-header,
+        .invoice-details,
         .comment-section {
-            margin-top: 20px;
+            page-break-before: avoid;
+            page-break-after: avoid;
+            overflow: visible;
         }
+
+        /* Adjust height and width of comment section */
+        .comment-section {
+            max-height: 300px; /* Adjust as necessary */
+            width: 100%; /* Ensure it takes up full width */
+        }
+
         .comment-section textarea {
-            width: 100%;
-            height: 100px;
-            border: 1px solid #ddd;
+            width: 100%; /* Increase width of textarea */
+            height: 150px; /* Increase height if needed */
             padding: 10px;
             font-size: 14px;
         }
-    </style>
+
+        /* Optional: adjust font sizes for printing */
+        h1, h2, h3, p {
+            font-size: 12px;
+        }
+
+        /* Ensure that large content doesn’t break the page */
+        #fee-table {
+            width: 100%;
+            table-layout: fixed;
+        }
+    }
+
+    /* Non-print styles (screen view) */
+    .comment-section {
+        width: 100%; /* Increase width for screen view */
+    }
+
+    .comment-section textarea {
+        width: 100%; /* Increase width of textarea */
+    }
+</style>
+
+</style>
+
 </head>
 <body>
     <div class="invoice-container">
@@ -72,7 +113,7 @@
                 <tbody>
                     <tr>
                         <td>Tuition Fee ({{ student.grade }})</td>
-                        <td class="editable" contenteditable="true">
+                        <td class="editable" contenteditable="false">
                             {% if student.grade == 'Playgroup' %} 6500
                             {% elif student.grade in ['Grade1', 'Grade2', 'Grade3'] %} 8500
                             {% elif student.grade in ['Grade4', 'Grade5', 'Grade6'] %} 9000
@@ -82,18 +123,33 @@
                     </tr>
                     <tr>
                         <td>Activity Fee</td>
-                        <td class="editable" contenteditable="true">200</td>
+                        <td class="editable" contenteditable="flse">200</td>
                     </tr>
-                    <tr>
+					
+					<tr>
                         <td>School Diary</td>
                         <td class="editable" contenteditable="true">150</td>
+                    </tr>
+					
+                    <tr>
+                        <td>Food</td>
+                        <td class="editable" contenteditable="true">
+    {% if student.food %}
+        3500
+    {% else %}
+        0
+    {% endif %}
+</td>
+
                     </tr>
                     <tr>
                         <td>Exercise Books</td>
                         <td class="editable" contenteditable="true">
                             {{ 1500 if student.exercise_books_fee == "yearly" else 500 }}
                         </td>
+						
                     </tr>
+					
                     <tr>
                         <td>Transport</td>
                         <td class="editable" contenteditable="true">
@@ -102,6 +158,10 @@
                             {% elif student.transport_mode == 'TwoWayUma' %} 8000
                             {% else %} 0 {% endif %}
                         </td>
+                    </tr>
+					<tr>
+                        <td>Assessment Tool </td>
+                        <td class="editable" contenteditable="flse">300</td>
                     </tr>
                 </tbody>
             </table>
@@ -122,7 +182,7 @@
         <!-- Comment Section -->
         <div class="comment-section">
             <label for="invoice-comment">Comment:</label>
-            <textarea id="invoice-comment" placeholder="Add any comments here..."></textarea>
+            <textarea id="invoice-comment" placeholder="Add any comments here...and mpesa confirmation code"></textarea>
         </div>
 		
 
