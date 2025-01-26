@@ -1,18 +1,238 @@
-<h3>Invoices for {{ student.first_name }} {{ student.family_name }}</h3>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editable Fee Statement - {{ student.first_name }} {{ student.middle_name }}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        /* General Styling */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .invoice-container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background: #fff;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            text-align: left;
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background: #f4f4f4;
+        }
+        .invoice-footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .invoice-footer button {
+            margin: 10px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .invoice-footer button:hover {
+            background-color: #45a049;
+        }
+        .hidden {
+            display: none;
+        }
+        /* Print Styles */
+        @media print {
+            .invoice-footer {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <div class="invoice-header">
+            <h1>Adams Junior Academy</h1>
+            <p>PO Box 179-01100, Kajiado</p>
+            <p>Phone: +254 0712674789</p>
+            <p>Email: adamsjunioracademy@gmail.com</p>
+            <h2>Fee Statement for {{ student.first_name }} {{ student.middle_name }}</h2>
+            <p><strong>Admission Number:</strong> {{ student.admission_number }}</p>
+            <p><strong>Grade:</strong> {{ student.grade }}</p>
+        </div>
 
-<table>
-    <tr>
-        <th>Invoice ID</th>
-        <th>Amount Paid</th>
-        <th>Balance Due</th>
-        <th>View</th>
-    </tr>
-    {% for invoice in invoices %}
-    <tr>
-        <td>{{ invoice.id }}</td>
-        <td>{{ invoice.amount_paid }}</td>
-        <td>{{ invoice.balance_due }}</td>
-        <td><a href="{{ url_for('view_invoice', invoice_id=invoice.id) }}">View Invoice</a></td>
-    </tr>
-    {% endfor %}
-</table>
+        <!-- Editable Fee Breakdown -->
+        <div class="invoice-details">
+            <h3>Fee Breakdown</h3>
+            <table id="fee-table">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Amount (KSH)</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="fee-body">
+                    <tr>
+                        <td>Tuition Fee ({{ student.grade }})</td>
+                        <td><input type="number" value="6500" class="fee-amount" readonly></td>
+                        <td class="actions-cell">
+                            <button class="remove-btn" onclick="removeRow(this)">Remove</button>
+                            <button class="save-btn hidden" onclick="saveRow(this)">Save</button>
+                        </td>
+                    </tr>
+                    {% if student.food %}
+                    <tr>
+                        <td>Food</td>
+                        <td><input type="number" value="3500" class="fee-amount" readonly></td>
+                        <td class="actions-cell">
+                            <button class="remove-btn" onclick="removeRow(this)">Remove</button>
+                            <button class="save-btn hidden" onclick="saveRow(this)">Save</button>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <td>Activity Fee</td>
+                        <td><input type="number" value="200" class="fee-amount" readonly></td>
+                        <td class="actions-cell">
+                            <button class="remove-btn" onclick="removeRow(this)">Remove</button>
+                            <button class="save-btn hidden" onclick="saveRow(this)">Save</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>safsafsfds</td>
+                        <td><input type="number" value="4534436" class="fee-amount" readonly></td>
+                        <td class="actions-cell">
+                            <button class="remove-btn" onclick="removeRow(this)">Remove</button>
+                            <button class="save-btn hidden" onclick="saveRow(this)">Save</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>New Item</td>
+                        <td><input type="number" value="0" class="fee-amount" readonly></td>
+                        <td class="actions-cell">
+                            <button class="remove-btn" onclick="removeRow(this)">Remove</button>
+                            <button class="save-btn hidden" onclick="saveRow(this)">Save</button>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td><strong>Total Fee</strong></td>
+                        <td id="total-fee">10200</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Amount Paid</strong></td>
+                        <td><input type="number" id="amount-paid" value="0"></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Balance</strong></td>
+                        <td id="balance">10200</td>
+                    </tr>
+                </tfoot>
+            </table>
+            <div id="edit-mode">
+                <button onclick="addRow()">Add Item</button>
+            </div>
+        </div>
+
+      <div class="invoice-footer">
+        <button id="edit-btn" onclick="toggleEdit()">Edit Invoice</button>
+        <button id="save-btn" class="hidden" onclick="saveChanges()">Save Changes</button>
+        <button onclick="printInvoice()">Print Invoice</button>
+        <button onclick="downloadInvoice()">Download PDF</button>
+    </div>
+
+<script>
+    let isEditing = false;
+
+    // Toggle edit mode
+    function toggleEdit() {
+        isEditing = !isEditing;
+        document.querySelectorAll('.fee-amount').forEach(input => {
+            input.readOnly = !isEditing;  // Enable editing when in edit mode
+        });
+        document.querySelectorAll('.actions-cell').forEach(cell => {
+            cell.querySelector('.remove-btn').classList.toggle('hidden', isEditing);  // Hide remove button when in edit mode
+            cell.querySelector('.save-btn').classList.toggle('hidden', !isEditing);  // Show save button when in edit mode
+        });
+
+        // Show the "Save Changes" button in edit mode
+        document.getElementById('save-btn').classList.toggle('hidden', !isEditing);
+    }
+
+    // Save all changes
+    async function saveChanges() {
+        const updatedFees = [];
+        document.querySelectorAll('#fee-body tr').forEach(row => {
+            const description = row.querySelector('td:first-child').textContent;
+            const amount = parseFloat(row.querySelector('.fee-amount').value);
+            updatedFees.push({ description, amount });
+        });
+
+        const data = {
+            student_id: {{ student.id }},
+            fees: updatedFees,
+            amount_paid: parseFloat(document.getElementById('amount-paid').value),
+        };
+
+        try {
+            const response = await fetch('/save-fee-statement', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+                alert('Changes saved successfully!');
+                toggleEdit(); // Turn off edit mode
+            } else {
+                alert('Error saving changes.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while saving changes.');
+        }
+    }
+
+    // Save individual row
+    function saveRow(button) {
+        const row = button.closest('tr');
+        const description = row.querySelector('td:first-child').textContent;
+        const amount = parseFloat(row.querySelector('.fee-amount').value);
+        console.log(`Saved: ${description} - KSH ${amount}`);
+    }
+
+    // Remove row
+    function removeRow(button) {
+        const row = button.closest('tr');
+        row.remove();
+    }
+
+    // Add a new row (for example purposes)
+    function addRow() {
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td>New Item</td>
+            <td><input type="number" value="0" class="fee-amount" readonly></td>
+            <td class="actions-cell">
+                <button class="remove-btn" onclick="removeRow(this)">Remove</button>
+                <button class="save-btn hidden" onclick="saveRow(this)">Save</button>
+            </td>
+        `;
+        document.getElementById('fee-body').appendChild(newRow);
+    }
+
+</script>
+
+</body>
+</html>

@@ -21,7 +21,7 @@
         </div>
         <div class="form-group">
             <label for="grade">Grade</label>
-            {{ form.grade(class="form-control", value=student.grade) }}
+            {{ form.grade(class="form-control", value=student.grade, onchange="updateFees()") }}
         </div>
 
         <!-- Fee Details -->
@@ -37,7 +37,7 @@
 
         <div class="form-group">
             <h4>Transport</h4>
-            <select class="form-control" id="transport_mode" name="transport_mode">
+            <select class="form-control" id="transport_mode" name="transport_mode" onchange="updateFees()">
                 <option value="None" {% if student.transport_mode == 'None' %} selected {% endif %}>None - Ksh 0</option>
                 <option value="OneWay" {% if student.transport_mode == 'OneWay' %} selected {% endif %}>One-Way - Ksh 4500</option>
                 <option value="TwoWayTown" {% if student.transport_mode == 'TwoWayTown' %} selected {% endif %}>Two-Way (Town) - Ksh 7000</option>
@@ -48,7 +48,7 @@
         <!-- Fee Breakdown -->
         <h4>Fee Breakdown</h4>
         <ul id="fee-breakdown">
-            <li>Tuition Fee: Ksh <span id="grade-fee">{{ student.grade_fee }}</span></li>
+            <li>Tuition Fee: Ksh <span id="tuition-fee">{{ student.grade_fee }}</span></li>
             <li>Food: Ksh <span id="food-fee">{{ student.food_fee }}</span></li>
             <li>Text Books: Ksh <span id="text-books-fee">{{ student.text_books_fee }}</span></li>
             <li>Exercise Books: Ksh <span id="exercise-books-fee">{{ student.exercise_books_fee }}</span></li>
@@ -62,6 +62,15 @@
         <!-- Total Fees -->
         <h4>Total Fees: Ksh <span id="total">{{ student.total_fee }}</span></h4>
 
+        <!-- Fees Paid -->
+        <div class="form-group">
+            <label for="fees_paid">Fees Paid</label>
+            <input type="number" id="fees_paid" class="form-control" name="fees_paid" value="{{ student.fees_paid }}" min="0">
+        </div>
+
+        <!-- Balance -->
+        <h4>Balance: Ksh <span id="balance">{{ student.total_fee - student.fees_paid }}</span></h4>
+
         <div class="form-group">
             <button type="submit" class="btn btn-primary custom-btn">Save Changes</button>
             <button type="button" class="btn custom-btn-danger" id="delete-button" onclick="window.history.back();">Cancel</button>
@@ -70,107 +79,76 @@
 </div>
 
 <script>
-    // Fee structure
-    const gradeFees = {
-        "Playgroup": 6500,
-        "PP1": 6500,
-        "PP2": 6500,
-        "Grade1": 8500,
-        "Grade2": 8500,
-        "Grade3": 8500,
-        "Grade4": 9000,
-        "Grade5": 9000,
-        "Grade6": 9000,
-        "Grade7": 12000,
-        "Grade8": 12000,
-        "Grade9": 12000,
+    // Fee structure based on grade
+    const feeStructure = {
+        "Playgroup": { tuition_fee: 6500, text_books_fee: 0, exercise_books_fee: 500, assesment_tool_fee: 0, activity_fee: 200, school_diary: 150 },
+        "PP1": { tuition_fee: 6500, text_books_fee: 0, exercise_books_fee: 500, assesment_tool_fee: 300, activity_fee: 200, school_diary: 150 },
+        "PP2": { tuition_fee: 6500, text_books_fee: 0, exercise_books_fee: 500, assesment_tool_fee: 300, activity_fee: 200, school_diary: 150 },
+        "Grade1": { tuition_fee: 8500, text_books_fee: 6000, exercise_books_fee: 500, assesment_tool_fee: 300, activity_fee: 200, school_diary: 150 },
+        "Grade2": { tuition_fee: 8500, text_books_fee: 6000, exercise_books_fee: 500, assesment_tool_fee: 300, activity_fee: 200, school_diary: 150 },
+        "Grade3": { tuition_fee: 8500, text_books_fee: 6000, exercise_books_fee: 500, assesment_tool_fee: 300, activity_fee: 200, school_diary: 150 },
+        "Grade4": { tuition_fee: 9000, text_books_fee: 6000, exercise_books_fee: 500, assesment_tool_fee: 300, activity_fee: 200, school_diary: 150 },
+        "Grade5": { tuition_fee: 9000, text_books_fee: 6000, exercise_books_fee: 500, assesment_tool_fee: 300, activity_fee: 200, school_diary: 150 },
+        "Grade6": { tuition_fee: 9000, text_books_fee: 6000, exercise_books_fee: 500, assesment_tool_fee: 300, activity_fee: 200, school_diary: 150 },
+        "Grade7": { tuition_fee: 12000, text_books_fee: 6000, exercise_books_fee: 500, assesment_tool_fee: 300, activity_fee: 200, school_diary: 150 },
+        "Grade8": { tuition_fee: 12000, text_books_fee: 6000, exercise_books_fee: 500, assesment_tool_fee: 300, activity_fee: 200, school_diary: 150 },
+        "Grade9": { tuition_fee: 12000, text_books_fee: 6000, exercise_books_fee: 500, assesment_tool_fee: 300, activity_fee: 200, school_diary: 150 },
     };
 
-    const optionalFees = {
-        "food": 3500,
-        "text_books_fee": 6000,
-        "exercise_books_fee": 500, // termly
-        "assesment_tool_fee": 300
-    };
+    // Function to update the fee breakdown and total fees
+    function updateFees() {
+        const grade = document.querySelector('[name="grade"]').value;
+        const studentFees = feeStructure[grade] || {};
 
-    const transportFees = {
-        "None": 0,
-        "OneWay": 4500,
-        "TwoWayTown": 7000,
-        "TwoWayUma": 8000
-    };
+        // Update fees based on the selected grade
+        document.getElementById("tuition-fee").textContent = studentFees.tuition_fee || 0;
+        document.getElementById("food-fee").textContent = document.getElementById("food").checked ? 3500 : 0;
+        document.getElementById("text-books-fee").textContent = studentFees.text_books_fee || 0;
+        document.getElementById("exercise-books-fee").textContent = studentFees.exercise_books_fee || 0;
+        document.getElementById("assessment-tools-fee").textContent = studentFees.assesment_tool_fee || 0;
+        document.getElementById("activity-fee").textContent = studentFees.activity_fee || 0;
+        document.getElementById("diary-fee").textContent = studentFees.school_diary || 0;
+        document.getElementById("admission-fee").textContent = 1000; // assuming a static admission fee
 
-    const defaultFees = {
-        "activity_fee": 200,
-        "diary_fee": 100,
-        "admission_fee": 1000,  // Playgroup students
-        "assesment_tool_fee": 300 // Default for PP1 to Grade 4
-    };
+        // Update total fee
+        updateTotal();
+        updateBalance();
+    }
 
-    // Function to calculate and update the total fees
+    // Function to calculate total fees
     function updateTotal() {
-        let total = 0;
-        
-        // Get grade and base fee
-        const gradeSelect = document.getElementById("{{ form.grade.id }}");
-        const grade = gradeSelect.value;
-        const gradeFee = gradeFees[grade] || 0;
-        total += gradeFee;
+        const tuitionFee = parseFloat(document.getElementById("tuition-fee").textContent);
+        const foodFee = document.getElementById("food").checked ? 3500 : 0;
+        const textBooksFee = parseFloat(document.getElementById("text-books-fee").textContent);
+        const exerciseBooksFee = parseFloat(document.getElementById("exercise-books-fee").textContent);
+        const assessmentToolsFee = parseFloat(document.getElementById("assessment-tools-fee").textContent);
+        const activityFee = parseFloat(document.getElementById("activity-fee").textContent);
+        const diaryFee = parseFloat(document.getElementById("diary-fee").textContent);
+        const admissionFee = parseFloat(document.getElementById("admission-fee").textContent);
 
-        // Update the breakdown for grade fee
-        document.getElementById("grade-fee").textContent = gradeFee;
+        const transportFee = {
+            "None": 0,
+            "OneWay": 4500,
+            "TwoWayTown": 7000,
+            "TwoWayUma": 8000,
+        }[document.getElementById("transport_mode").value] || 0;
 
-        // Add default fees for PP1 to Grade 4
-        if (grade === "Playgroup") {
-            total += defaultFees.activity_fee;
-            document.getElementById("activity-fee").textContent = defaultFees.activity_fee;
+        const total = tuitionFee + foodFee + textBooksFee + exerciseBooksFee + assessmentToolsFee + activityFee + diaryFee + admissionFee + transportFee;
 
-            total += defaultFees.diary_fee;
-            document.getElementById("diary-fee").textContent = defaultFees.diary_fee;
-
-            total += defaultFees.admission_fee;
-            document.getElementById("admission-fee").textContent = defaultFees.admission_fee;
-
-            total += defaultFees.assesment_tool_fee;
-            document.getElementById("assessment-tools-fee").textContent = defaultFees.assesment_tool_fee;
-        } else {
-            document.getElementById("admission-fee").textContent = 0;
-            document.getElementById("assessment-tools-fee").textContent = 0;
-        }
-
-        // Add selected optional fees and update breakdown
-        const foodFee = document.getElementById("food").checked ? optionalFees["food"] : 0;
-        total += foodFee;
-        document.getElementById("food-fee").textContent = foodFee;
-
-        const textBooksFee = (grade === "Grade1" || grade === "Grade2" || grade === "Grade3" || grade === "Grade4" || grade === "Grade5" || grade === "Grade6" || grade === "Grade7" || grade === "Grade8" || grade === "Grade9") && document.getElementById("text_books_fee").checked ? optionalFees["text_books_fee"] : 0;
-        total += textBooksFee;
-        document.getElementById("text-books-fee").textContent = textBooksFee;
-
-        const exerciseBooksFee = document.getElementById("exercise_books_fee").checked ? optionalFees["exercise_books_fee"] : 0;
-        total += exerciseBooksFee;
-        document.getElementById("exercise-books-fee").textContent = exerciseBooksFee;
-
-        const assessmentToolsFee = (grade === "PP1" || grade === "PP2" || grade === "Grade1" || grade === "Grade2" || grade === "Grade3" || grade === "Grade4") && document.getElementById("assesment_tool_fee").checked ? optionalFees["assesment_tool_fee"] : 0;
-        total += assessmentToolsFee;
-        document.getElementById("assessment-tools-fee").textContent = assessmentToolsFee;
-
-        // Add selected transport fee and update breakdown
-        const transportSelect = document.getElementById("transport_mode");
-        const transportFee = transportFees[transportSelect.value];
-        total += transportFee;
-        document.getElementById("transport-fee").textContent = transportFee;
-
-        // Update the total fee in the HTML
         document.getElementById("total").textContent = total;
     }
 
-    // Event listeners to recalculate on changes
-    document.querySelectorAll('input[type="checkbox"], select').forEach(function (el) {
-        el.addEventListener('change', updateTotal);
-    });
+    // Function to update balance
+    function updateBalance() {
+        const totalFee = parseFloat(document.getElementById("total").textContent);
+        const feesPaid = parseFloat(document.getElementById("fees_paid").value) || 0;
+        const balance = totalFee - feesPaid;
+        document.getElementById("balance").textContent = balance;
+    }
 
-    // Run the calculation initially
-    updateTotal();
+    // Initial call to update fees
+    updateFees();
+    document.getElementById("fees_paid").addEventListener('input', updateBalance);
+    document.getElementById("transport_mode").addEventListener('change', updateFees);
 </script>
 {% endblock %}

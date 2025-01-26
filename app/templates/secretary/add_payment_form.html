@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Payment</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script>
+        // JavaScript function to update the balance dynamically
+        function updateBalance() {
+            const amountPaid = parseFloat(document.getElementById('amount').value) || 0;
+            const totalFee = parseFloat(document.getElementById('total_fee').value);
+            const updatedBalance = totalFee - amountPaid;
+            document.getElementById('updated_balance').innerText = updatedBalance.toFixed(2);
+        }
+    </script>
+</head>
+<body>
+
+    <h1>Add Payment for Student</h1>
+
+    <form method="POST" action="{{ url_for('main_bp.add_payment', student_id=student.id) }}">
+        <div>
+            <label for="amount">Amount:</label>
+            <input type="number" id="amount" name="amount" required onchange="updateBalance()">
+        </div>
+
+        <div>
+            <label for="payment_method">Payment Method:</label>
+            <select id="payment_method" name="payment_method" required>
+                <option value="credit_card">Credit Card</option>
+                <option value="bank_transfer">Bank Transfer</option>
+                <option value="cash">Cash</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="date">Payment Date:</label>
+            <input type="date" id="date" name="date" required>
+        </div>
+
+        <div>
+            <label for="confirmation_code">Confirmation Code:</label>
+            <input type="text" id="confirmation_code" name="confirmation_code" required>
+        </div>
+
+        <div>
+            <label for="total_fee">Total Fee (KSH):</label>
+            <input type="number" id="total_fee" name="total_fee" value="{{ student.total_fee }}" readonly>
+        </div>
+
+        <div>
+            <p><strong>Updated Balance: KSH <span id="updated_balance">{{ student.balance }}</span></strong></p>
+        </div>
+
+        <div>
+            <button type="submit">Submit Payment</button>
+        </div>
+    </form>
+
+</body>
+</html>

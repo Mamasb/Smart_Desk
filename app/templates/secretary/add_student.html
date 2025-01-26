@@ -39,30 +39,28 @@
             </div>
 
             <!-- Optional Fees -->
-            <div class="form-group">
-                <label>Optional Fees</label>
-                <div class="form-check">
-                    {{ form.food(class="form-check-input") }}
-                    <label for="food" class="form-check-label">{{ form.food.label }}</label>
-                </div>
-                <div class="form-check">
-                    {{ form.text_books_fee(class="form-check-input") }}
-                    <label for="text_books_fee" class="form-check-label">{{ form.text_books_fee.label }}</label>
-                </div>
-                <div class="form-check">
-                    {{ form.exercise_books_fee(class="form-check-input") }}
-                    <label for="exercise_books_fee" class="form-check-label">{{ form.exercise_books_fee.label }}</label>
-                </div>
-                <div class="form-check">
-                    {{ form.assesment_tool_fee(class="form-check-input") }}
-                    <label for="assesment_tool_fee" class="form-check-label">{{ form.assesment_tool_fee.label }}</label>
-                </div>
+            <h4>Optional Fees</h4>
+            <div class="form-check">
+                {{ form.food(class="form-check-input", id="food") }}
+                <label for="food" class="form-check-label">{{ form.food.label }} (Ksh 3500)</label>
+            </div>
+            <div class="form-check">
+                {{ form.text_books_fee(class="form-check-input", id="text_books_fee") }}
+                <label for="text_books_fee" class="form-check-label">{{ form.text_books_fee.label }} (Ksh 6000)</label>
+            </div>
+            <div class="form-check">
+                {{ form.exercise_books_fee(class="form-check-input", id="exercise_books_fee") }}
+                <label for="exercise_books_fee" class="form-check-label">{{ form.exercise_books_fee.label }} (Ksh 500)</label>
+            </div>
+            <div class="form-check">
+                {{ form.assesment_tool_fee(class="form-check-input", id="assesment_tool_fee") }}
+                <label for="assesment_tool_fee" class="form-check-label">{{ form.assesment_tool_fee.label }} (Ksh 300)</label>
             </div>
 
             <!-- Transport Mode -->
             <div class="form-group">
                 <label for="transport_mode">{{ form.transport_mode.label }}</label>
-                {{ form.transport_mode(class="form-control") }}
+                {{ form.transport_mode(class="form-control", required=True) }}
             </div>
 
             <!-- Fee Breakdown -->
@@ -135,10 +133,10 @@
         document.getElementById("grade-fee").textContent = gradeFee;
 
         // Add optional fees
-        const isFood = document.getElementById("{{ form.food.id }}").checked;
-        const isTextBooks = document.getElementById("{{ form.text_books_fee.id }}").checked;
-        const isExerciseBooks = document.getElementById("{{ form.exercise_books_fee.id }}").checked;
-        const isAssessmentTool = document.getElementById("{{ form.assesment_tool_fee.id }}").checked;
+        const isFood = document.getElementById("food").checked;
+        const isTextBooks = document.getElementById("text_books_fee").checked;
+        const isExerciseBooks = document.getElementById("exercise_books_fee").checked;
+        const isAssessmentTool = document.getElementById("assesment_tool_fee").checked;
 
         total += isFood ? optionalFees.food : 0;
         document.getElementById("food-fee").textContent = isFood ? optionalFees.food : "0";
@@ -177,9 +175,9 @@
 
     document.addEventListener("DOMContentLoaded", updateTotal);
     document.getElementById("{{ form.grade.id }}").addEventListener("change", updateTotal);
-    document.getElementById("{{ form.food.id }}").addEventListener("change", updateTotal);
-    document.getElementById("{{ form.text_books_fee.id }}").addEventListener("change", updateTotal);
-    document.getElementById("{{ form.exercise_books_fee.id }}").addEventListener("change", updateTotal);
+    document.getElementById("food").addEventListener("change", updateTotal);
+    document.getElementById("text_books_fee").addEventListener("change", updateTotal);
+    document.getElementById("exercise_books_fee").addEventListener("change", updateTotal);
     document.getElementById("{{ form.transport_mode.id }}").addEventListener("change", updateTotal);
 </script>
 {% endblock %}
