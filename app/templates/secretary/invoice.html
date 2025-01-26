@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fee Statement - {{ student.first_name }} {{ student.middle_name }}</title>
+<<<<<<< HEAD
     <link rel="stylesheet" href="/static/css/style.css">
     <style>
         /* General Styling */
@@ -47,10 +48,75 @@
             cursor: pointer;
             font-size: 14px;
             border-radius: 5px;
+=======
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+    <style>
+   <style>
+    /* Styling for buttons */
+    .invoice-footer button {
+        margin: 10px 5px;
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .invoice-footer button:hover {
+        background-color: #45a049;
+    }
+
+    .editable {
+        border: 1px solid #ddd;
+        padding: 5px;
+    }
+
+    /* Print-specific CSS */
+    @media print {
+        .invoice-footer button {
+            display: none;
         }
-        .invoice-footer button:hover {
-            background-color: #45a049;
+
+        /* Prevent page breaks inside the content */
+        body, .invoice-container {
+            page-break-inside: avoid;
         }
+
+        /* Force content to fit the page */
+        .invoice-header,
+        .invoice-details,
+        .comment-section {
+            page-break-before: avoid;
+            page-break-after: avoid;
+            overflow: visible;
+>>>>>>> 1f49e2a45b67eee712bbecda4674bf1227c1b728
+        }
+
+        /* Adjust height and width of comment section */
+        .comment-section {
+            max-height: 300px; /* Adjust as necessary */
+            width: 100%; /* Ensure it takes up full width */
+        }
+
+        .comment-section textarea {
+            width: 100%; /* Increase width of textarea */
+            height: 150px; /* Increase height if needed */
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        /* Optional: adjust font sizes for printing */
+        h1, h2, h3, p {
+            font-size: 12px;
+        }
+
+        /* Ensure that large content doesn’t break the page */
+        #fee-table {
+            width: 100%;
+            table-layout: fixed;
+        }
+<<<<<<< HEAD
         .hidden {
             display: none;
         }
@@ -88,10 +154,27 @@
 
         }
     </style>
+=======
+    }
+
+    /* Non-print styles (screen view) */
+    .comment-section {
+        width: 100%; /* Increase width for screen view */
+    }
+
+    .comment-section textarea {
+        width: 100%; /* Increase width of textarea */
+    }
+</style>
+
+</style>
+
+>>>>>>> 1f49e2a45b67eee712bbecda4674bf1227c1b728
 </head>
 <body>
     <div class="invoice-container">
         <div class="invoice-header">
+<<<<<<< HEAD
             <h1>Adams Junior Academy</h1>
             <p>PO Box 179-01100, Kajiado</p>
             <p>Phone: +254 0712674789</p>
@@ -99,6 +182,17 @@
             <h2>Fee Statement for {{ student.first_name }} {{ student.middle_name }}</h2>
             <p><strong>Admission Number:</strong> {{ student.admission_number }}</p>
             <p><strong>Grade:</strong> {{ student.grade }}</p>
+=======
+            <div class="school-info">
+                <h1>Adams Junior Academy</h1>
+                <h3>PO Box 179-01100, Kajiado</h3>
+                <h3>Phone: +254 0712674789</h3>
+                <h3>Email: adamsjunioracademy@gmail.com</h3>
+            </div>
+            <h2>Fee Statement for {{ student.first_name }} {{ student.middle_name }}</h2>
+            <h2><strong>Admission Number:</strong> {{ student.admission_number }}</h2>
+            <h2><strong>Grade:</strong> {{ student.grade }}</h2>
+>>>>>>> 1f49e2a45b67eee712bbecda4674bf1227c1b728
         </div>
 
         <!-- Fee Breakdown Table -->
@@ -112,6 +206,7 @@
                         <th class="hidden" id="edit-header">Actions</th>
                     </tr>
                 </thead>
+<<<<<<< HEAD
                 <tbody id="fee-body">
                     <tr>
                         <td>Tuition Fee ({{ student.grade }})</td>
@@ -154,12 +249,69 @@
                         <td id="balance">0</td>
                     </tr>
                 </tfoot>
+=======
+                <tbody>
+                    <tr>
+                        <td>Tuition Fee ({{ student.grade }})</td>
+                        <td class="editable" contenteditable="false">
+                            {% if student.grade == 'Playgroup' %} 6500
+                            {% elif student.grade in ['Grade1', 'Grade2', 'Grade3'] %} 8500
+                            {% elif student.grade in ['Grade4', 'Grade5', 'Grade6'] %} 9000
+                            {% elif student.grade in ['Grade7', 'Grade8', 'Grade9'] %} 12000
+                            {% else %} 0 {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Activity Fee</td>
+                        <td class="editable" contenteditable="flse">200</td>
+                    </tr>
+					
+					<tr>
+                        <td>School Diary</td>
+                        <td class="editable" contenteditable="true">150</td>
+                    </tr>
+					
+                    <tr>
+                        <td>Food</td>
+                        <td class="editable" contenteditable="true">
+    {% if student.food %}
+        3500
+    {% else %}
+        0
+    {% endif %}
+</td>
+
+                    </tr>
+                    <tr>
+                        <td>Exercise Books</td>
+                        <td class="editable" contenteditable="true">
+                            {{ 1500 if student.exercise_books_fee == "yearly" else 500 }}
+                        </td>
+						
+                    </tr>
+					
+                    <tr>
+                        <td>Transport</td>
+                        <td class="editable" contenteditable="true">
+                            {% if student.transport_mode == 'OneWay' %} 4500
+                            {% elif student.transport_mode == 'TwoWayTown' %} 7000
+                            {% elif student.transport_mode == 'TwoWayUma' %} 8000
+                            {% else %} 0 {% endif %}
+                        </td>
+                    </tr>
+					<tr>
+                        <td>Assessment Tool </td>
+                        <td class="editable" contenteditable="flse">300</td>
+                    </tr>
+                </tbody>
+>>>>>>> 1f49e2a45b67eee712bbecda4674bf1227c1b728
             </table>
             <div class="hidden" id="edit-controls">
                 <button onclick="addRow()">Add Item</button>
             </div>
         </div>
 
+<<<<<<< HEAD
         <!-- Payment Details -->
         <div class="payment-details">
           
@@ -168,19 +320,48 @@
             <p><strong>Lipa Na Mpesa:</strong> Paybill Number: 111999</p>
             <p><strong>Account Number:</strong> 200411#Admission Number  <strong> Account Name:</strong> Adams J Academy</p>
    
+=======
+            <!-- Total Fee Calculation -->
+            <hr>
+            <p><strong>Total Fee:</strong> KSH <span id="total-fee">0</span></p>
+            <p><strong>Amount Paid:</strong> KSH <span id="amount-paid" contenteditable="true">{{ student.amount_paid or 0 }}</span></p>
+            <p><strong>Balance:</strong> KSH <span id="balance">0</span></p>
+>>>>>>> 1f49e2a45b67eee712bbecda4674bf1227c1b728
         </div>
+		        <h1>Payment Method</h1>
+				<p><strong> Lipa na MPESA  paybill</strong>: 111999 </p>		
+				<p><strong> Account Number</strong>: 200411  # admission number </p>
+				<h1>Bank Deposit</h1>
+				<p><strong> Sidian Bank Account Number</strong>: 01029150013477 </p>		
+				<p><strong>NB: KIndly use pupil's Grade Full names and admission number  </strong></p>
+
+        <!-- Comment Section -->
+        <div class="comment-section">
+            <label for="invoice-comment">Comment:</label>
+            <textarea id="invoice-comment" placeholder="Add any comments here...and mpesa confirmation code"></textarea>
+        </div>
+		
+
 
         <!-- Invoice Footer -->
         <div class="invoice-footer">
+<<<<<<< HEAD
             <button onclick="toggleEdit()">Edit Invoice</button>
             <button onclick="saveChanges()">Save Changes</button>
             <button onclick="printInvoice()">Print Invoice</button>
             <button onclick="downloadInvoice()">Download PDF</button>
+=======
+            <button id="edit-button" onclick="toggleEditMode()">Edit Invoice</button>
+            <button id="save-button" onclick="saveInvoice()">Save Invoice</button>
+            <button onclick="window.print()">Print Invoice</button>
+            <button onclick="downloadInvoice()">Download Invoice as PDF</button>
+>>>>>>> 1f49e2a45b67eee712bbecda4674bf1227c1b728
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
     <script>
+<<<<<<< HEAD
         let isEditing = false;
 
         // Toggle edit mode
@@ -265,6 +446,62 @@
         }
 
         // Initial calculation
+=======
+        function calculateTotals() {
+            const rows = document.querySelectorAll("#fee-table tbody tr");
+            let totalFee = 0;
+            rows.forEach(row => {
+                const amountCell = row.querySelector("td:last-child");
+                const amount = parseFloat(amountCell.textContent.trim()) || 0;
+                totalFee += amount;
+            });
+            const amountPaid = parseFloat(document.getElementById("amount-paid").textContent.trim()) || 0;
+            const balance = totalFee - amountPaid;
+
+            document.getElementById("total-fee").textContent = totalFee.toFixed(2);
+            document.getElementById("balance").textContent = balance.toFixed(2);
+        }
+
+        function toggleEditMode() {
+            const editableCells = document.querySelectorAll(".editable");
+            editableCells.forEach(cell => {
+                cell.setAttribute("contenteditable", "true");
+                cell.style.backgroundColor = "#f9f9f9";
+            });
+
+            const amountPaidCell = document.getElementById("amount-paid");
+            amountPaidCell.setAttribute("contenteditable", "true");
+            amountPaidCell.style.backgroundColor = "#f9f9f9";
+            
+            calculateTotals();
+        }
+
+        function saveInvoice() {
+            const editableCells = document.querySelectorAll(".editable");
+            editableCells.forEach(cell => {
+                cell.setAttribute("contenteditable", "false");
+                cell.style.backgroundColor = "transparent";
+            });
+
+            const amountPaidCell = document.getElementById("amount-paid");
+            amountPaidCell.setAttribute("contenteditable", "false");
+            amountPaidCell.style.backgroundColor = "transparent";
+
+            calculateTotals();
+            alert("Invoice saved successfully!");
+        }
+
+        function downloadInvoice() {
+            window.open('/download_invoice/{{ student.id }}', '_blank');
+        }
+
+        document.querySelectorAll(".editable").forEach(cell => {
+            cell.addEventListener("input", calculateTotals);
+        });
+
+        document.getElementById("amount-paid").addEventListener("input", calculateTotals);
+
+>>>>>>> 1f49e2a45b67eee712bbecda4674bf1227c1b728
         calculateTotals();
     </script>
 </body>

@@ -95,6 +95,7 @@
         "Grade9": { tuition_fee: 12000, text_books_fee: 6000, exercise_books_fee: 500, assesment_tool_fee: 300, activity_fee: 200, school_diary: 150 },
     };
 
+<<<<<<< HEAD
     // Function to update the fee breakdown and total fees
     function updateFees() {
         const grade = document.querySelector('[name="grade"]').value;
@@ -114,6 +115,28 @@
         updateTotal();
         updateBalance();
     }
+=======
+    const optionalFees = {
+        "food": 3500,
+        "text_books_fee": 6000,
+        "exercise_books_fee": 500, // termly
+        "assesment_tool_fee": 300
+    };
+
+    const transportFees = {
+        "None": 0,
+        "OneWay": 4500,
+        "TwoWayTown": 7000,
+        "TwoWayUma": 8000
+    };
+
+    const defaultFees = {
+        "activity_fee": 200,
+        "diary_fee": 150,
+        "admission_fee": 1000,  // Playgroup students
+        "assesment_tool_fee": 300 // Default for PP1 to Grade 4
+    };
+>>>>>>> 1f49e2a45b67eee712bbecda4674bf1227c1b728
 
     // Function to calculate total fees
     function updateTotal() {
