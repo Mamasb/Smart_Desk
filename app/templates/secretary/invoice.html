@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fee Statement - {{ student.first_name }} {{ student.middle_name }}</title>
-<<<<<<< HEAD
     <link rel="stylesheet" href="/static/css/style.css">
     <style>
         /* General Styling */
@@ -35,10 +34,6 @@
         th {
             background: #f4f4f4;
         }
-        .invoice-footer {
-            text-align: center;
-            margin-top: 20px;
-        }
         .invoice-footer button {
             margin: 10px;
             padding: 10px 20px;
@@ -48,153 +43,61 @@
             cursor: pointer;
             font-size: 14px;
             border-radius: 5px;
-=======
-    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
-    <style>
-   <style>
-    /* Styling for buttons */
-    .invoice-footer button {
-        margin: 10px 5px;
-        padding: 10px 20px;
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        cursor: pointer;
-        font-size: 14px;
-    }
-
-    .invoice-footer button:hover {
-        background-color: #45a049;
-    }
-
-    .editable {
-        border: 1px solid #ddd;
-        padding: 5px;
-    }
-
-    /* Print-specific CSS */
-    @media print {
-        .invoice-footer button {
-            display: none;
         }
-
-        /* Prevent page breaks inside the content */
-        body, .invoice-container {
-            page-break-inside: avoid;
+        .invoice-footer button:hover {
+            background-color: #45a049;
         }
-
-        /* Force content to fit the page */
-        .invoice-header,
-        .invoice-details,
-        .comment-section {
-            page-break-before: avoid;
-            page-break-after: avoid;
-            overflow: visible;
->>>>>>> 1f49e2a45b67eee712bbecda4674bf1227c1b728
+        .editable {
+            border: 1px solid #ddd;
+            padding: 5px;
         }
-
-        /* Adjust height and width of comment section */
-        .comment-section {
-            max-height: 300px; /* Adjust as necessary */
-            width: 100%; /* Ensure it takes up full width */
+        .edit-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
         }
-
-        .comment-section textarea {
-            width: 100%; /* Increase width of textarea */
-            height: 150px; /* Increase height if needed */
-            padding: 10px;
-            font-size: 14px;
+        .edit-button:hover {
+            background-color: #45a049;
         }
-
-        /* Optional: adjust font sizes for printing */
-        h1, h2, h3, p {
-            font-size: 12px;
+        /* Print-specific CSS */
+        @media print {
+            .invoice-footer button {
+                display: none;
+            }
+            .invoice-footer {
+                display: none; /* Hide the footer */
+            }
+            body, .invoice-container {
+                page-break-inside: avoid;
+            }
+            .invoice-header, .invoice-footer {
+                display: block;
+            }
+            .invoice-footer {
+                position: absolute;
+                bottom: 20px;
+                width: 100%;
+            }
         }
-
-        /* Ensure that large content doesn’t break the page */
-        #fee-table {
-            width: 100%;
-            table-layout: fixed;
-        }
-<<<<<<< HEAD
         .hidden {
             display: none;
         }
-        /* Payment Details Styling */
-        .payment-details {
-            margin-top: 40px;
-            border-top: 2px solid #ddd;
-            padding-top: 20px;
-        }
-        .payment-details h3 {
-            margin: 0;
-            margin-bottom: 10px;
-            font-size: 18px;
-        }
-        .payment-details p {
-            margin: 5px 0;
-        }
-        /* Print Styles */
-        @media print {
-    /* Ensure all elements are displayed */
-    body, .invoice-container, .invoice-header, .invoice-details, .payment-details, .invoice-footer {
-        display: block !important;
-    }
-
-    /* Ensure specific elements are displayed */
-    .invoice-header p, .invoice-details h3, .payment-details h3 {
-        display: block !important;
-    }
-
-    /* Hide elements that should not appear in the print version */
-    .invoice-footer {
-        display: none;
-    }
-}
-
-        }
     </style>
-=======
-    }
-
-    /* Non-print styles (screen view) */
-    .comment-section {
-        width: 100%; /* Increase width for screen view */
-    }
-
-    .comment-section textarea {
-        width: 100%; /* Increase width of textarea */
-    }
-</style>
-
-</style>
-
->>>>>>> 1f49e2a45b67eee712bbecda4674bf1227c1b728
 </head>
 <body>
     <div class="invoice-container">
         <div class="invoice-header">
-<<<<<<< HEAD
             <h1>Adams Junior Academy</h1>
-            <p>PO Box 179-01100, Kajiado</p>
-            <p>Phone: +254 0712674789</p>
-            <p>Email: adamsjunioracademy@gmail.com</p>
+            <h3>PO Box 179-01100, Kajiado<h3>
+            <h3>Phone: +254 0712674789<h3>
+            <h3>Email: adamsjunioracademy@gmail.com<h3>
             <h2>Fee Statement for {{ student.first_name }} {{ student.middle_name }}</h2>
-            <p><strong>Admission Number:</strong> {{ student.admission_number }}</p>
-            <p><strong>Grade:</strong> {{ student.grade }}</p>
-=======
-            <div class="school-info">
-                <h1>Adams Junior Academy</h1>
-                <h3>PO Box 179-01100, Kajiado</h3>
-                <h3>Phone: +254 0712674789</h3>
-                <h3>Email: adamsjunioracademy@gmail.com</h3>
-            </div>
-            <h2>Fee Statement for {{ student.first_name }} {{ student.middle_name }}</h2>
-            <h2><strong>Admission Number:</strong> {{ student.admission_number }}</h2>
-            <h2><strong>Grade:</strong> {{ student.grade }}</h2>
->>>>>>> 1f49e2a45b67eee712bbecda4674bf1227c1b728
+            <h3><strong>Admission Number:</strong> {{ student.admission_number }}<h3>
+            <p><strong></strong> {{ student.grade }}</p>
         </div>
-
+        
         <!-- Fee Breakdown Table -->
         <div class="invoice-details">
             <h3>Fee Breakdown</h3>
@@ -203,306 +106,143 @@
                     <tr>
                         <th>Description</th>
                         <th>Amount (KSH)</th>
-                        <th class="hidden" id="edit-header">Actions</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
-<<<<<<< HEAD
-                <tbody id="fee-body">
+                <tbody id="fee-items">
                     <tr>
                         <td>Tuition Fee ({{ student.grade }})</td>
-                        <td><input type="number" value="6500" class="fee-amount" readonly></td>
-                        <td class="hidden" id="edit-actions">
-                            <button onclick="saveRow(this)">Save</button>
-                            <button onclick="removeRow(this)">Remove</button>
-                        </td>
+                        <td class="fee-value">{% if student.grade == 'Playgroup' %} 6500 {% elif student.grade in ['Grade1', 'Grade2', 'Grade3'] %} 8500 {% elif student.grade in ['Grade4', 'Grade5', 'Grade6'] %} 9000 {% elif student.grade in ['Grade7', 'Grade8', 'Grade9'] %} 12000 {% else %} 0 {% endif %}</td>
+                        <td><button class="edit-button" onclick="editRow(this)">Edit</button></td>
                     </tr>
-                    {% if student.food %}
-                    <tr>
-                        <td>Food</td>
-                        <td><input type="number" value="3500" class="fee-amount" readonly></td>
-                        <td class="hidden" id="edit-actions">
-                            <button onclick="saveRow(this)">Save</button>
-                            <button onclick="removeRow(this)">Remove</button>
-                        </td>
-                    </tr>
-                    {% endif %}
-                    <tr>
-                        <td>Activity Fee</td>
-                        <td><input type="number" value="200" class="fee-amount" readonly></td>
-                        <td class="hidden" id="edit-actions">
-                            <button onclick="saveRow(this)">Save</button>
-                            <button onclick="removeRow(this)">Remove</button>
-                        </td>
-                    </tr>
+                    <tr><td>Activity Fee</td><td class="fee-value">200</td><td><button class="edit-button" onclick="editRow(this)">Edit</button></td></tr>
+                    <tr><td>School Diary</td><td class="fee-value">150</td><td><button class="edit-button" onclick="editRow(this)">Edit</button></td></tr>
+                    <tr><td>Food</td><td class="fee-value">{% if student.food %} 3500 {% else %} 0 {% endif %}</td><td><button class="edit-button" onclick="editRow(this)">Edit</button></td></tr>
+                    <tr><td>Exercise Books</td><td class="fee-value">500</td><td><button class="edit-button" onclick="editRow(this)">Edit</button></td></tr>
+                    <tr><td>Transport</td><td class="fee-value">{% if student.transport_mode == 'OneWay' %} 4500 {% elif student.transport_mode == 'TwoWayTown' %} 7000 {% elif student.transport_mode == 'TwoWayUma' %} 8000 {% else %} 0 {% endif %}</td><td><button class="edit-button" onclick="editRow(this)">Edit</button></td></tr>
+                    <tr><td>Assessment Tool</td><td class="fee-value">300</td><td><button class="edit-button" onclick="editRow(this)">Edit</button></td></tr>
                 </tbody>
-                <tfoot>
-                    <tr>
-                        <td><strong>Total Fee</strong></td>
-                        <td id="total-fee">0</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Amount Paid</strong></td>
-                        <td><input type="number" id="amount-paid" value="{{ student.amount_paid or 0 }}"></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Balance</strong></td>
-                        <td id="balance">0</td>
-                    </tr>
-                </tfoot>
-=======
-                <tbody>
-                    <tr>
-                        <td>Tuition Fee ({{ student.grade }})</td>
-                        <td class="editable" contenteditable="false">
-                            {% if student.grade == 'Playgroup' %} 6500
-                            {% elif student.grade in ['Grade1', 'Grade2', 'Grade3'] %} 8500
-                            {% elif student.grade in ['Grade4', 'Grade5', 'Grade6'] %} 9000
-                            {% elif student.grade in ['Grade7', 'Grade8', 'Grade9'] %} 12000
-                            {% else %} 0 {% endif %}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Activity Fee</td>
-                        <td class="editable" contenteditable="flse">200</td>
-                    </tr>
-					
-					<tr>
-                        <td>School Diary</td>
-                        <td class="editable" contenteditable="true">150</td>
-                    </tr>
-					
-                    <tr>
-                        <td>Food</td>
-                        <td class="editable" contenteditable="true">
-    {% if student.food %}
-        3500
-    {% else %}
-        0
-    {% endif %}
-</td>
-
-                    </tr>
-                    <tr>
-                        <td>Exercise Books</td>
-                        <td class="editable" contenteditable="true">
-                            {{ 1500 if student.exercise_books_fee == "yearly" else 500 }}
-                        </td>
-						
-                    </tr>
-					
-                    <tr>
-                        <td>Transport</td>
-                        <td class="editable" contenteditable="true">
-                            {% if student.transport_mode == 'OneWay' %} 4500
-                            {% elif student.transport_mode == 'TwoWayTown' %} 7000
-                            {% elif student.transport_mode == 'TwoWayUma' %} 8000
-                            {% else %} 0 {% endif %}
-                        </td>
-                    </tr>
-					<tr>
-                        <td>Assessment Tool </td>
-                        <td class="editable" contenteditable="flse">300</td>
-                    </tr>
-                </tbody>
->>>>>>> 1f49e2a45b67eee712bbecda4674bf1227c1b728
             </table>
-            <div class="hidden" id="edit-controls">
-                <button onclick="addRow()">Add Item</button>
-            </div>
-        </div>
-
-<<<<<<< HEAD
-        <!-- Payment Details -->
-        <div class="payment-details">
-          
-            <p><strong>Bank Deposit:</strong></p>
-            <p>Bank Name: Sidian Bank Account No: 01029150013477</p>
-            <p><strong>Lipa Na Mpesa:</strong> Paybill Number: 111999</p>
-            <p><strong>Account Number:</strong> 200411#Admission Number  <strong> Account Name:</strong> Adams J Academy</p>
-   
-=======
-            <!-- Total Fee Calculation -->
             <hr>
             <p><strong>Total Fee:</strong> KSH <span id="total-fee">0</span></p>
-            <p><strong>Amount Paid:</strong> KSH <span id="amount-paid" contenteditable="true">{{ student.amount_paid or 0 }}</span></p>
+            <p><strong>Amount Paid:</strong> KSH <input id="amount-paid" type="number" value="{{ student.amount_paid or 0 }}" oninput="updateBalance()"></p>
             <p><strong>Balance:</strong> KSH <span id="balance">0</span></p>
->>>>>>> 1f49e2a45b67eee712bbecda4674bf1227c1b728
         </div>
-		        <h1>Payment Method</h1>
-				<p><strong> Lipa na MPESA  paybill</strong>: 111999 </p>		
-				<p><strong> Account Number</strong>: 200411  # admission number </p>
-				<h1>Bank Deposit</h1>
-				<p><strong> Sidian Bank Account Number</strong>: 01029150013477 </p>		
-				<p><strong>NB: KIndly use pupil's Grade Full names and admission number  </strong></p>
-
-        <!-- Comment Section -->
-        <div class="comment-section">
-            <label for="invoice-comment">Comment:</label>
-            <textarea id="invoice-comment" placeholder="Add any comments here...and mpesa confirmation code"></textarea>
+        
+        <!-- Payment Details -->
+        <div class="payment-details">
+            <h2>Payment Method</h2>
+            <p><strong>Bank Deposit:</strong> Bank Name: Sidian Bank Account No: 01029150013477</p>
+            <p><strong>Lipa Na Mpesa:</strong> Paybill Number: 111999</p>
+            <p><strong>Account Number:</strong> 200411#Admission Number</p>
+            <p><strong>Account Name:</strong> Adams J Academy</p>
         </div>
-		
-
-
-        <!-- Invoice Footer -->
+        
         <div class="invoice-footer">
-<<<<<<< HEAD
-            <button onclick="toggleEdit()">Edit Invoice</button>
-            <button onclick="saveChanges()">Save Changes</button>
-            <button onclick="printInvoice()">Print Invoice</button>
-            <button onclick="downloadInvoice()">Download PDF</button>
-=======
-            <button id="edit-button" onclick="toggleEditMode()">Edit Invoice</button>
-            <button id="save-button" onclick="saveInvoice()">Save Invoice</button>
-            <button onclick="window.print()">Print Invoice</button>
-            <button onclick="downloadInvoice()">Download Invoice as PDF</button>
->>>>>>> 1f49e2a45b67eee712bbecda4674bf1227c1b728
+            <button onclick="toggleButtons()">Add/Edit/Delete</button>
+            <div id="action-buttons" class="hidden">
+                <button onclick="addItem()">Add Item</button>
+                <button onclick="deleteItem()">Delete Item</button>
+                <button onclick="saveChanges()">Save</button>
+                <button onclick="undoChanges()">Undo</button>
+            </div>
+            <button onclick="window.print()">Print Statement</button>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
     <script>
-<<<<<<< HEAD
-        let isEditing = false;
+        let prevState = []; // To store previous state for undo
+        let initialState = []; // To store the initial state
 
-        // Toggle edit mode
-        function toggleEdit() {
-            isEditing = !isEditing;
-            document.querySelectorAll('.fee-amount').forEach(input => input.readOnly = !isEditing);
-            document.querySelectorAll('#edit-actions, #edit-controls, #edit-header').forEach(el => {
-                el.classList.toggle('hidden', !isEditing);
+        // Store initial state of the table for undo purposes
+        function storeState() {
+            const rows = [];
+            document.querySelectorAll("#fee-items tr").forEach(row => {
+                const cells = row.getElementsByTagName("td");
+                rows.push({
+                    description: cells[0].innerText,
+                    amount: cells[1].innerText
+                });
             });
+            if (initialState.length === 0) {
+                initialState = [...rows];
+            }
+            prevState = rows; // Save state for undo
         }
 
-        // Add a new row
-        function addRow() {
-            const tbody = document.getElementById('fee-body');
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td><input type="text" value="New Item"></td>
-                <td><input type="number" value="0" class="fee-amount" ${isEditing ? '' : 'readonly'}></td>
-                <td id="edit-actions" ${isEditing ? '' : 'class="hidden"'}>
-                    <button onclick="saveRow(this)">Save</button> 
-                    <button onclick="removeRow(this)">Remove</button>
-                </td>
-            `;
-            tbody.appendChild(row);
-            calculateTotals();
-        }
-
-        // Remove a row
-        function removeRow(button) {
-            button.parentElement.parentElement.remove();
-            calculateTotals();
-        }
-
-        // Save changes in a row
-        function saveRow(button) {
-            const row = button.parentElement.parentElement;
-            row.querySelectorAll('input').forEach(input => input.readOnly = true);
-            calculateTotals();
-        }
-
-        // Calculate totals and balances
-        function calculateTotals() {
-            let totalFee = 0;
-            document.querySelectorAll('.fee-amount').forEach(input => {
-                totalFee += parseFloat(input.value) || 0;
+        // Real-time calculation of the total fee and balance
+        function calculateTotal() {
+            let total = 0;
+            document.querySelectorAll(".fee-value").forEach(cell => {
+                let value = parseFloat(cell.innerText.trim().replace(/,/g, '')) || 0;
+                total += value;
             });
-            const amountPaid = parseFloat(document.getElementById('amount-paid').value) || 0;
-            const balance = totalFee - amountPaid;
-
-            document.getElementById('total-fee').textContent = totalFee;
-            document.getElementById('balance').textContent = balance;
+            document.getElementById("total-fee").innerText = total.toLocaleString();
+            updateBalance();
         }
 
-        // Real-time calculations
-        document.querySelectorAll('.fee-amount, #amount-paid').forEach(input => {
-            input.addEventListener('input', calculateTotals);
-        });
-
-        // Save all changes
-        function saveChanges() {
-            toggleEdit();
+        // Update balance based on total fee and amount paid
+        function updateBalance() {
+            let totalFee = parseFloat(document.getElementById("total-fee").innerText.replace(/,/g, '')) || 0;
+            let amountPaid = parseFloat(document.getElementById("amount-paid").value) || 0;
+            let balance = totalFee - amountPaid;
+            document.getElementById("balance").innerText = balance.toLocaleString();
         }
 
-        // Print invoice
-        function printInvoice() {
-            window.print();
-        }
-
-        // Download PDF
-        async function downloadInvoice() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            const content = document.querySelector('.invoice-container');
-            await doc.html(content, {
-                callback: function (doc) {
-                    doc.save('Fee_Statement.pdf');
-                },
-                x: 10,
-                y: 10,
-                html2canvas: { scale: 0.5 },
-            });
-        }
-
-        // Initial calculation
-=======
-        function calculateTotals() {
-            const rows = document.querySelectorAll("#fee-table tbody tr");
-            let totalFee = 0;
+        // Undo changes to table state
+        function undoChanges() {
+            let rows = [...initialState];
+            const tableBody = document.getElementById("fee-items");
+            tableBody.innerHTML = '';
             rows.forEach(row => {
-                const amountCell = row.querySelector("td:last-child");
-                const amount = parseFloat(amountCell.textContent.trim()) || 0;
-                totalFee += amount;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${row.description}</td><td class="fee-value">${row.amount}</td><td><button class="edit-button" onclick="editRow(this)">Edit</button></td>`;
+                tableBody.appendChild(tr);
             });
-            const amountPaid = parseFloat(document.getElementById("amount-paid").textContent.trim()) || 0;
-            const balance = totalFee - amountPaid;
-
-            document.getElementById("total-fee").textContent = totalFee.toFixed(2);
-            document.getElementById("balance").textContent = balance.toFixed(2);
+            calculateTotal();
         }
 
-        function toggleEditMode() {
-            const editableCells = document.querySelectorAll(".editable");
-            editableCells.forEach(cell => {
-                cell.setAttribute("contenteditable", "true");
-                cell.style.backgroundColor = "#f9f9f9";
-            });
-
-            const amountPaidCell = document.getElementById("amount-paid");
-            amountPaidCell.setAttribute("contenteditable", "true");
-            amountPaidCell.style.backgroundColor = "#f9f9f9";
-            
-            calculateTotals();
+        function addItem() {
+            const table = document.getElementById("fee-items");
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td><input type="text" class="editable" placeholder="Item Description"></td>
+                <td><input type="number" class="editable" placeholder="Amount"></td>
+                <td><button class="edit-button" onclick="saveRow(this)">Save</button></td>
+            `;
+            table.appendChild(row);
         }
 
-        function saveInvoice() {
-            const editableCells = document.querySelectorAll(".editable");
-            editableCells.forEach(cell => {
-                cell.setAttribute("contenteditable", "false");
-                cell.style.backgroundColor = "transparent";
-            });
-
-            const amountPaidCell = document.getElementById("amount-paid");
-            amountPaidCell.setAttribute("contenteditable", "false");
-            amountPaidCell.style.backgroundColor = "transparent";
-
-            calculateTotals();
-            alert("Invoice saved successfully!");
+        function editRow(button) {
+            const row = button.closest("tr");
+            row.querySelector("td:first-child").innerHTML = `<input type="text" value="${row.cells[0].innerText}" class="editable">`;
+            row.querySelector("td:nth-child(2)").innerHTML = `<input type="number" value="${row.cells[1].innerText}" class="editable">`;
+            button.innerText = "Save";
+            button.setAttribute("onclick", "saveRow(this)");
         }
 
-        function downloadInvoice() {
-            window.open('/download_invoice/{{ student.id }}', '_blank');
+        function saveRow(button) {
+            const row = button.closest("tr");
+            const description = row.querySelector("input[type='text']").value;
+            const amount = row.querySelector("input[type='number']").value;
+            row.innerHTML = `
+                <td>${description}</td>
+                <td class="fee-value">${amount}</td>
+                <td><button class="edit-button" onclick="editRow(this)">Edit</button></td>
+            `;
+            storeState();
+            calculateTotal();
         }
 
-        document.querySelectorAll(".editable").forEach(cell => {
-            cell.addEventListener("input", calculateTotals);
-        });
+        // Toggle action buttons visibility
+        function toggleButtons() {
+            const actionButtons = document.getElementById("action-buttons");
+            actionButtons.classList.toggle("hidden");
+        }
 
-        document.getElementById("amount-paid").addEventListener("input", calculateTotals);
-
->>>>>>> 1f49e2a45b67eee712bbecda4674bf1227c1b728
-        calculateTotals();
+        // Initialize page by calculating initial total
+        storeState();
+        calculateTotal();
     </script>
 </body>
 </html>
