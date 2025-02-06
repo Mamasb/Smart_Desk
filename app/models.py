@@ -1,4 +1,3 @@
-
 from . import db
 from datetime import datetime, timedelta
 
@@ -18,7 +17,6 @@ class Invoice(db.Model):
     def __repr__(self):
         return f"<Invoice {self.id} for {self.student.first_name} {self.student.family_name}>"
 
-
 # Student model to represent a student record
 class Student(db.Model):
     __tablename__ = "student"
@@ -35,6 +33,7 @@ class Student(db.Model):
     text_books_fee = db.Column(db.Boolean, default=False)  # True if textbooks are needed
     exercise_books_fee = db.Column(db.String(10), nullable=True)  # 'termly' or 'yearly'
     assesment_tool_fee = db.Column(db.Boolean, default=False)  # True if required
+    activity_fee = db.Column(db.Boolean, default=False)  # Activity fee added
     transport_mode = db.Column(db.String(20), nullable=True)  # 'OneWay', 'TwoWayTown', 'TwoWayUma'
     
     # Financial fields
@@ -90,6 +89,7 @@ class Student(db.Model):
         exercise_books_fee_termly = 500  # Exercise books termly fee
         exercise_books_fee_yearly = 1500  # Exercise books yearly fee
         assessment_tool_fee = 300  # Assessment tools fee
+        activity_fee = 1000  # New activity fee
 
         # Transport Fees Mapping
         transport_fees = {
@@ -115,6 +115,8 @@ class Student(db.Model):
             total += exercise_books_fee_termly
         if self.assesment_tool_fee:
             total += assessment_tool_fee
+        if self.activity_fee:  # Add activity fee if selected
+            total += activity_fee
         if self.transport_mode in transport_fees:
             total += transport_fees[self.transport_mode]
 

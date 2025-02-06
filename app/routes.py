@@ -84,10 +84,9 @@ def add_student():
         flash("Please correct the errors in the form and try again.", "danger")
 
     return render_template('secretary/add_student.html', form=form)
-
-# Route for editing an existing student
 @main_bp.route('/secretary/edit_student/<int:student_id>', methods=['GET', 'POST'])
 def edit_student(student_id):
+    # Retrieve the student record
     student = get_student_by_id(student_id)
     form = StudentForm(obj=student)
 
@@ -99,23 +98,37 @@ def edit_student(student_id):
             student.family_name = form.family_name.data
             student.grade = form.grade.data
             student.fees_paid = form.fees_paid.data
+
+            # Update fee fields based on the form submission
             student.food = form.food.data
             student.text_books_fee = form.text_books_fee.data
             student.exercise_books_fee = form.exercise_books_fee.data
             student.assesment_tool_fee = form.assesment_tool_fee.data
+            student.activity_fee = form.activity_fee.data  # Update Activity Fee
+            student.school_diary_fee = form.school_diary_fee.data  # Update School Diary Fee
+
+            # Update transport mode
             student.transport_mode = form.transport_mode.data
+
+            # Recalculate total fee based on updated values
             student.calculate_total_fee()
 
+            # Commit changes to the database
             db.session.commit()
             flash("Student details updated successfully!", "success")
+
         except Exception as e:
+            # Rollback in case of error and log exception
             db.session.rollback()
             print(f"Error editing student: {e}")
             flash("An error occurred while updating the student details. Please try again.", "danger")
 
+        # Redirect to the student management page
         return redirect(url_for('main_bp.manage_students'))
 
     return render_template('secretary/edit_student.html', student=student, form=form)
+
+
 
 # Route for generating an invoice for a student
 @main_bp.route('/secretary/generate_invoice/<int:student_id>', methods=['GET'])
@@ -125,11 +138,17 @@ def generate_invoice(student_id):
     fees_paid = student.fees_paid or 0.0
     balance_due = total_fee - fees_paid
 
+    # Pass all fees for breakdown in the template
     return render_template(
         'secretary/invoice.html',
         student=student,
         total_fee=total_fee,
         balance=balance_due,
+        food_fee=student.food,
+        text_books_fee=student.text_books_fee,
+        exercise_books_fee=student.exercise_books_fee,
+        assesment_tool_fee=student.assesment_tool_fee,
+        transport_fee=student.transport_mode,
         current_date=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
     )
 

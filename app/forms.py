@@ -30,6 +30,8 @@ class StudentForm(FlaskForm):
     text_books_fee = BooleanField('Text Books')
     exercise_books_fee = BooleanField('Exercise Books')
     assesment_tool_fee = BooleanField('Assessment Tools')
+    activity_fee = FloatField('Activity Fee', default=0.0)  # Added activity fee field
+    school_diary_fee = FloatField('School Diary Fee', default=0.0)  # Added the school diary fee field
 
     # Transport-related Fields
     transport_mode = SelectField('Transport Mode', choices=[
