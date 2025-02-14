@@ -27,10 +27,10 @@
       color: white;
       z-index: 1030;
     }
-    /* Sticky Admission Number Column */
-    .sticky-admission {
+    /* Sticky Full Name Column */
+    .sticky-fullname {
       position: sticky;
-      left: 0; /* Sticks to the left edge */
+      left: 50px; /* Adjust this value to match the combined width of preceding columns (# and Admission Number) */
       background: linear-gradient(to right, #212529, white 80%);
       overflow: hidden;
       white-space: nowrap;
@@ -40,13 +40,13 @@
       padding: 10px;
     }
     /* Ensure header cell stays above table cells */
-    .table thead th.sticky-admission {
+    .table thead th.sticky-fullname {
       z-index: 1040;
       background: #212529;
       color: white;
     }
     /* Fade effect for sticky column */
-    .sticky-admission::after {
+    .sticky-fullname::after {
       content: "";
       position: absolute;
       top: 0;
@@ -108,10 +108,18 @@
         <thead class="table-dark">
           <tr>
             <th>#</th>
-            <th class="sticky-admission">Admission Number</th>
-            <th>Full Name</th>
+            <th>Admission Number</th>
+            <th class="sticky-fullname">Full Name</th>
             <th>Grade</th>
+            <th>Admission Fee</th>
+            <th>Interview</th>
             <th>Tuition Fee</th>
+            <th>Exercise Books Fee</th>
+            <th>Assessment Tool Fee</th>
+            <th>Activity Fees</th>
+            <th>School Diary</th>
+            <th>Food</th>
+            <th>Transport</th>
             <th>Expected Fees</th>
             <th>Fees Paid</th>
             <th>Balance</th>
@@ -121,17 +129,49 @@
         <tbody>
           {% if students %}
             {% for student in students %}
-            <tr>
+            <tr data-editing="false">
               <td>{{ loop.index }}</td>
-              <td class="sticky-admission">{{ student.admission_number }}</td>
-              <td>{{ student.first_name }} {{ student.middle_name }} {{ student.family_name }}</td>
-              <td>{{ student.grade }}</td>
-              <td>{{ student.tuition_fee|default(0, true)|float }}</td>
-              <td class="expected-fees">
+              <td class="editable" data-field="admission_number">{{ student.admission_number }}</td>
+              <td class="editable sticky-fullname" data-field="full_name">{{ student.first_name }} {{ student.middle_name }} {{ student.family_name }}</td>
+              <td class="editable" data-field="grade">{{ student.grade }}</td>
+              <td class="editable" data-field="admission_fee">
+                {% if student.grade == "Playgroup" %}
+                  1000
+                {% endif %}
+              </td>
+              <td class="editable" data-field="interview_fee">{{ student.interview_fee|default('', true) }}</td>
+              <td class="editable" data-field="tuition_fee">
+                {% if student.grade == "Playgroup" %}
+                  6500
+                {% elif student.grade in ["PP1", "PP2"] %}
+                  6500
+                {% elif student.grade in ["Grade1", "Grade2", "Grade3"] %}
+                  8500
+                {% elif student.grade in ["Grade4", "Grade5", "Grade6"] %}
+                  9000
+                {% elif student.grade in ["Grade7", "Grade8", "Grade9"] %}
+                  12000
+                {% else %}
+                  {{ student.tuition_fee|default(0, true)|float }}
+                {% endif %}
+              </td>
+              <td class="editable" data-field="exercise_books_fee">500</td>
+              <td class="editable" data-field="assessment_tool_fee">
+                {% if student.grade == "Playgroup" %}
+                  0
+                {% else %}
+                  300
+                {% endif %}
+              </td>
+              <td class="editable" data-field="activity_fees">200</td>
+              <td class="editable" data-field="school_diary">150</td>
+              <td class="editable" data-field="food"></td>
+              <td class="editable" data-field="transport"></td>
+              <td class="editable" data-field="expected_fees">
                 {{ (student.fees_paid|default(0, true)|float) + (student.balance|default(0, true)|float) }}
               </td>
-              <td>{{ student.fees_paid|default(0, true)|float }}</td>
-              <td>
+              <td class="editable" data-field="fees_paid">{{ student.fees_paid|default(0, true)|float }}</td>
+              <td class="editable" data-field="balance">
                 {% if student.balance is not none %}
                   {{ student.balance|default(0, true)|float }}
                 {% else %}
@@ -139,7 +179,7 @@
                 {% endif %}
               </td>
               <td>
-                <a href="{{ url_for('main_bp.edit_student', student_id=student.id) }}" class="btn btn-warning btn-sm">Edit</a>
+                <button type="button" class="btn btn-warning btn-sm edit-btn" data-student-id="{{ student.id }}">Edit</button>
                 <form action="{{ url_for('main_bp.delete_student', student_id=student.id) }}" method="POST" style="display:inline;" onsubmit="return confirmDelete()">
                   <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                 </form>
@@ -149,14 +189,22 @@
             {% endfor %}
           {% else %}
             <tr>
-              <td colspan="9" class="text-center">No students found.</td>
+              <td colspan="17" class="text-center">No students found.</td>
             </tr>
           {% endif %}
         </tbody>
         <tfoot>
           <tr>
             <td colspan="4" class="text-end"><strong>Total:</strong></td>
+            <td id="total-admission-fee">0</td>
+            <td id="total-interview-fee">0</td>
             <td id="total-tuition-fee">0</td>
+            <td id="total-exercise-books-fee">0</td>
+            <td id="total-assessment-tool-fee">0</td>
+            <td id="total-activity-fees">0</td>
+            <td id="total-school-diary">0</td>
+            <td></td>
+            <td></td>
             <td id="total-expected-fees">0</td>
             <td id="total-fees-paid">0</td>
             <td id="total-balance">0</td>
@@ -167,35 +215,110 @@
     </div>
   </div>
   
+  <!-- JavaScript for Inline Editing and Saving -->
   <script>
-    // Function to calculate and display the totals dynamically
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.edit-btn').forEach(function(button) {
+            button.addEventListener('click', function() {
+                var row = button.closest('tr');
+                var isEditing = row.getAttribute('data-editing') === 'true';
+                if (!isEditing) {
+                    // Enter edit mode: Replace editable cell text with input fields
+                    row.querySelectorAll('.editable').forEach(function(cell) {
+                        var cellText = cell.textContent.trim();
+                        cell.innerHTML = '<input type="text" value="' + cellText + '" class="form-control" style="width: 100%;">';
+                    });
+                    row.setAttribute('data-editing', 'true');
+                    button.textContent = 'Save';
+                } else {
+                    // Exit edit mode: Gather updated data and send it to the backend
+                    var studentId = button.getAttribute('data-student-id');
+                    var updatedData = {};
+                    row.querySelectorAll('.editable').forEach(function(cell) {
+                        var field = cell.getAttribute('data-field');
+                        var input = cell.querySelector('input');
+                        var newValue = input.value;
+                        updatedData[field] = newValue;
+                        cell.textContent = newValue;
+                    });
+                    row.setAttribute('data-editing', 'false');
+                    button.textContent = 'Edit';
+                    
+                    // Update the backend via a POST request (adjust the endpoint as needed)
+                    fetch(`/update_student/${studentId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(updatedData)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log('Student updated successfully');
+                            // Optionally display a success message or update additional UI elements.
+                        } else {
+                            alert('Error updating student');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error updating student');
+                    });
+                    
+                    // Recalculate totals after saving
+                    calculateTotals();
+                }
+            });
+        });
+    });
+
+    // Calculate totals for fee columns
     function calculateTotals() {
-      let totalTuitionFee = 0;
-      let totalExpectedFees = 0;
-      let totalFeesPaid = 0;
-      let totalBalance = 0;
-      document.querySelectorAll('tbody tr').forEach(row => {
-        // Ensure we get valid numbers from each cell
-        const tuitionFee = parseFloat(row.cells[4].textContent) || 0;
-        const expectedFees = parseFloat(row.cells[5].textContent) || 0;
-        const feesPaid = parseFloat(row.cells[6].textContent) || 0;
-        const balance = parseFloat(row.cells[7].textContent) || 0;
-        totalTuitionFee += tuitionFee;
-        totalExpectedFees += expectedFees;
-        totalFeesPaid += feesPaid;
-        totalBalance += balance;
-      });
-      document.getElementById('total-tuition-fee').textContent = totalTuitionFee.toFixed(2);
-      document.getElementById('total-expected-fees').textContent = totalExpectedFees.toFixed(2);
-      document.getElementById('total-fees-paid').textContent = totalFeesPaid.toFixed(2);
-      document.getElementById('total-balance').textContent = totalBalance.toFixed(2);
+        let totalAdmissionFee = 0;
+        let totalInterviewFee = 0;
+        let totalTuitionFee = 0;
+        let totalExerciseBooksFee = 0;
+        let totalAssessmentToolFee = 0;
+        let totalActivityFees = 0;
+        let totalSchoolDiary = 0;
+        let totalExpectedFees = 0;
+        let totalFeesPaid = 0;
+        let totalBalance = 0;
+
+        document.querySelectorAll('tr').forEach(function(row) {
+            if (row.getAttribute('data-editing') === 'false') {
+                totalAdmissionFee += parseFloat(row.querySelector('[data-field="admission_fee"]').textContent) || 0;
+                totalInterviewFee += parseFloat(row.querySelector('[data-field="interview_fee"]').textContent) || 0;
+                totalTuitionFee += parseFloat(row.querySelector('[data-field="tuition_fee"]').textContent) || 0;
+                totalExerciseBooksFee += parseFloat(row.querySelector('[data-field="exercise_books_fee"]').textContent) || 0;
+                totalAssessmentToolFee += parseFloat(row.querySelector('[data-field="assessment_tool_fee"]').textContent) || 0;
+                totalActivityFees += parseFloat(row.querySelector('[data-field="activity_fees"]').textContent) || 0;
+                totalSchoolDiary += parseFloat(row.querySelector('[data-field="school_diary"]').textContent) || 0;
+                totalExpectedFees += parseFloat(row.querySelector('[data-field="expected_fees"]').textContent) || 0;
+                totalFeesPaid += parseFloat(row.querySelector('[data-field="fees_paid"]').textContent) || 0;
+                totalBalance += parseFloat(row.querySelector('[data-field="balance"]').textContent) || 0;
+            }
+        });
+
+        // Update total row
+        document.getElementById('total-admission-fee').textContent = totalAdmissionFee.toFixed(2);
+        document.getElementById('total-interview-fee').textContent = totalInterviewFee.toFixed(2);
+        document.getElementById('total-tuition-fee').textContent = totalTuitionFee.toFixed(2);
+        document.getElementById('total-exercise-books-fee').textContent = totalExerciseBooksFee.toFixed(2);
+        document.getElementById('total-assessment-tool-fee').textContent = totalAssessmentToolFee.toFixed(2);
+        document.getElementById('total-activity-fees').textContent = totalActivityFees.toFixed(2);
+        document.getElementById('total-school-diary').textContent = totalSchoolDiary.toFixed(2);
+        document.getElementById('total-expected-fees').textContent = totalExpectedFees.toFixed(2);
+        document.getElementById('total-fees-paid').textContent = totalFeesPaid.toFixed(2);
+        document.getElementById('total-balance').textContent = totalBalance.toFixed(2);
     }
-    window.onload = calculateTotals;
-    
+
     function confirmDelete() {
-      return confirm("Are you sure you want to delete this student?");
+        return confirm("Are you sure you want to delete this student?");
     }
   </script>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

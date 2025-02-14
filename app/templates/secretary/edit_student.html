@@ -1,146 +1,112 @@
 {% extends 'base.html' %}
 {% block content %}
-<div style="width: 100%; padding: 20px; box-sizing: border-box;">
-    <form id="fee-form" style="max-width: 600px; margin: 0 auto; background-color: #f9f9f9; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-        <h2 style="text-align: center; font-size: 24px; color: #333; margin-bottom: 20px;">Fee Calculation</h2>
-        
-        <div style="margin-bottom: 20px;">
-            <label for="student-name" style="display: block; font-weight: bold; color: #333;">Student Name:</label>
-            <input type="text" id="student-name" name="student_name" required style="width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px;">
-        </div>
-        
-        <div style="margin-bottom: 20px;">
-            <label for="student-class" style="display: block; font-weight: bold; color: #333;">Class:</label>
-            <select id="student-class" name="student_class" required style="width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px;">
-                <option value="Nursery">Nursery</option>
-                <option value="Grade 1-3">Grade 1-3</option>
-                <option value="Grade 4-6">Grade 4-6</option>
-                <option value="Grade 7-9">Grade 7-9</option>
-            </select>
-        </div>
-        
-        <div style="margin-bottom: 20px;">
-            <label for="food" style="font-weight: bold; color: #333;">
-                <input type="checkbox" id="food" name="food" style="margin-right: 10px;">Food
-            </label>
-            <div style="font-size: 14px; margin-left: 20px; color: #555;">
-                <p style="margin: 0;">Food fee: <span id="food-fee">0</span></p>
-            </div>
-        </div>
-
-        <div style="margin-bottom: 20px;">
-            <label for="transport_mode" style="font-weight: bold; color: #333;">Transport Mode:</label>
-            <select id="transport_mode" name="transport_mode" style="width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px;">
-                <option value="OneWay">One Way</option>
-                <option value="TwoWayTown">Two Way (Town)</option>
-                <option value="TwoWayUma">Two Way (Uma)</option>
-            </select>
-            <div style="font-size: 14px; margin-top: 10px; color: #555;">
-                <p style="margin: 0;">Transport Fee: <span id="transport-fee">0</span></p>
-            </div>
-        </div>
-
-        <div style="margin-bottom: 20px;">
-            <label for="text-books-fee" style="font-weight: bold; color: #333;">Textbooks Fee:</label>
-            <input type="number" id="text-books-fee" name="text_books_fee" value="0" disabled style="width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px;">
-        </div>
-        
-        <div style="margin-bottom: 20px;">
-            <label for="exercise-books-fee" style="font-weight: bold; color: #333;">Exercise Books Fee:</label>
-            <input type="number" id="exercise-books-fee" name="exercise_books_fee" value="0" disabled style="width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px;">
-        </div>
-
-        <div style="margin-bottom: 20px;">
-            <label for="assessment-tools-fee" style="font-weight: bold; color: #333;">Assessment Tools Fee:</label>
-            <input type="number" id="assessment-tools-fee" name="assesment_tool_fee" value="0" disabled style="width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px;">
-        </div>
-
-        <div style="margin-bottom: 20px;">
-            <label for="activity-fee" style="font-weight: bold; color: #333;">Activity Fee:</label>
-            <input type="number" id="activity-fee" name="activity_fee" value="0" disabled style="width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px;">
-        </div>
-
-        <div style="margin-bottom: 20px;">
-            <label for="diary-fee" style="font-weight: bold; color: #333;">School Diary Fee:</label>
-            <input type="number" id="diary-fee" name="school_diary" value="0" disabled style="width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px;">
-        </div>
-
-        <div style="margin-bottom: 20px;">
-            <label for="fees_paid" style="font-weight: bold; color: #333;">Fees Paid:</label>
-            <input type="number" id="fees_paid" name="fees_paid" value="0" style="width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px;">
-        </div>
-
-        <div style="font-size: 16px; color: #333; margin-bottom: 10px;">
-            <p>Total Fees: <span id="total">0</span></p>
-        </div>
-
-        <div style="font-size: 16px; color: #333; margin-bottom: 10px;">
-            <p>Balance Due: <span id="balance">0</span></p>
-        </div>
-
-        <button type="button" onclick="updateFees()" style="width: 100%; padding: 12px; font-size: 16px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Update Fees</button>
-    </form>
+<div class="container mt-5">
+  <h2 class="text-center">Edit Student Fee Breakdown</h2>
+  <form method="POST" action="{{ url_for('main_bp.update_student', student_id=student.id) }}">
+    <div class="table-responsive mt-4">
+      <table class="table table-bordered table-hover table-sm text-center align-middle" style="background: #f9f9f9;">
+        <thead class="table-dark">
+          <tr>
+            <th>#</th>
+            <th class="sticky-admission">Admission Number</th>
+            <th>Full Name</th>
+            <th>Grade</th>
+            <th>Tuition Fee</th>
+            <th>Exercise Books Fee</th>
+            <th>Assessment Tool Fee</th>
+            <th>Activity Fees</th>
+            <th>School Diary</th>
+            <th>Food</th>
+            <th>Transport</th>
+            <th>Expected Fees</th>
+            <th>Fees Paid</th>
+            <th>Balance</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <!-- Row Number (static) -->
+            <td>1</td>
+            <!-- Admission Number (read‑only) -->
+            <td class="sticky-admission">{{ student.admission_number }}</td>
+            <!-- Full Name (read‑only) -->
+            <td>{{ student.first_name }} {{ student.middle_name }} {{ student.family_name }}</td>
+            <!-- Grade (read‑only) -->
+            <td>{{ student.grade }}</td>
+            <!-- Tuition Fee (editable) -->
+            <td>
+              <input type="number" name="tuition_fee" id="tuition_fee" value="{{ student.tuition_fee|default(0) }}" onchange="recalculate()" class="form-control" style="max-width: 100px;">
+            </td>
+            <!-- Exercise Books Fee (editable) -->
+            <td>
+              <input type="number" name="exercise_books_fee" id="exercise_books_fee" value="{{ student.exercise_books_fee|default(0) }}" onchange="recalculate()" class="form-control" style="max-width: 100px;">
+            </td>
+            <!-- Assessment Tool Fee (editable) -->
+            <td>
+              <input type="number" name="assessment_tool_fee" id="assessment_tool_fee" value="{{ student.assessment_tool_fee|default(0) }}" onchange="recalculate()" class="form-control" style="max-width: 100px;">
+            </td>
+            <!-- Activity Fees (editable) -->
+            <td>
+              <input type="number" name="activity_fees" id="activity_fees" value="{{ student.activity_fees|default(0) }}" onchange="recalculate()" class="form-control" style="max-width: 100px;">
+            </td>
+            <!-- School Diary (editable) -->
+            <td>
+              <input type="number" name="school_diary" id="school_diary" value="{{ student.school_diary|default(0) }}" onchange="recalculate()" class="form-control" style="max-width: 100px;">
+            </td>
+            <!-- Food (editable) -->
+            <td>
+              <input type="number" name="food_fee" id="food_fee" value="{{ student.food_fee|default(0) }}" onchange="recalculate()" class="form-control" style="max-width: 100px;">
+            </td>
+            <!-- Transport (editable) -->
+            <td>
+              <input type="number" name="transport_fee" id="transport_fee" value="{{ student.transport_fee|default(0) }}" onchange="recalculate()" class="form-control" style="max-width: 100px;">
+            </td>
+            <!-- Expected Fees (computed, readonly) -->
+            <td>
+              <input type="number" name="expected_fees" id="expected_fees" value="{{ student.expected_fees|default(0) }}" readonly class="form-control-plaintext" style="max-width: 100px;">
+            </td>
+            <!-- Fees Paid (editable) -->
+            <td>
+              <input type="number" name="fees_paid" id="fees_paid" value="{{ student.fees_paid|default(0) }}" onchange="recalculate()" class="form-control" style="max-width: 100px;">
+            </td>
+            <!-- Balance (computed, readonly) -->
+            <td>
+              <input type="number" name="balance" id="balance" value="{{ student.balance|default(0) }}" readonly class="form-control-plaintext" style="max-width: 100px;">
+            </td>
+            <!-- Actions (Save button) -->
+            <td>
+              <button type="submit" class="btn btn-primary btn-sm">Save</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </form>
 </div>
 
 <script>
-    function updateFees() {
-        const studentClass = document.getElementById("student-class").value;
-        let studentFees = {};
-        
-        switch (studentClass) {
-            case "Nursery":
-                studentFees.tuition_fee = 6500;
-                break;
-            case "Grade 1-3":
-                studentFees.tuition_fee = 8500;
-                break;
-            case "Grade 4-6":
-                studentFees.tuition_fee = 9000;
-                break;
-            case "Grade 7-9":
-                studentFees.tuition_fee = 12000;
-                break;
-        }
-
-        // Update food fee
-        studentFees.food_fee = document.getElementById("food").checked ? 3500 : 0;
-        document.getElementById("food-fee").textContent = studentFees.food_fee || 0;
-        document.getElementById("text-books-fee").textContent = studentFees.text_books_fee || 0;
-        document.getElementById("exercise-books-fee").textContent = studentFees.exercise_books_fee || 0;
-        document.getElementById("assessment-tools-fee").textContent = studentFees.assesment_tool_fee || 0;
-        document.getElementById("activity-fee").textContent = studentFees.activity_fee || 0;
-        document.getElementById("diary-fee").textContent = studentFees.school_diary || 0;
-
-        // Transport fee
-        const transportMode = document.getElementById("transport_mode").value;
-        let transportFee = 0;
-        switch (transportMode) {
-            case "OneWay":
-                transportFee = 4500;
-                break;
-            case "TwoWayTown":
-                transportFee = 7000;
-                break;
-            case "TwoWayUma":
-                transportFee = 8000;
-                break;
-        }
-        document.getElementById("transport-fee").textContent = transportFee;
-
-        // Calculate total fees
-        const total = studentFees.tuition_fee + parseInt(document.getElementById("food-fee").textContent) + parseInt(document.getElementById("text-books-fee").textContent) + 
-            parseInt(document.getElementById("exercise-books-fee").textContent) + parseInt(document.getElementById("assessment-tools-fee").textContent) + 
-            parseInt(document.getElementById("activity-fee").textContent) + parseInt(document.getElementById("diary-fee").textContent) + transportFee;
-
-        document.getElementById("total").textContent = total;
-
-        // Update balance
-        const feesPaid = document.getElementById("fees_paid").value || 0;
-        document.getElementById("balance").textContent = total - feesPaid;
-    }
-
-    // Initial fees update
-    updateFees();
+  function recalculate() {
+    // Retrieve the numeric values from the input fields (defaulting to 0)
+    const tuition = parseFloat(document.getElementById("tuition_fee").value) || 0;
+    const exercise = parseFloat(document.getElementById("exercise_books_fee").value) || 0;
+    const assessment = parseFloat(document.getElementById("assessment_tool_fee").value) || 0;
+    const activity = parseFloat(document.getElementById("activity_fees").value) || 0;
+    const diary = parseFloat(document.getElementById("school_diary").value) || 0;
+    const food = parseFloat(document.getElementById("food_fee").value) || 0;
+    const transport = parseFloat(document.getElementById("transport_fee").value) || 0;
+    const feesPaid = parseFloat(document.getElementById("fees_paid").value) || 0;
+    
+    // Calculate Expected Fees as the sum of all fee components
+    const expected = tuition + exercise + assessment + activity + diary + food + transport;
+    document.getElementById("expected_fees").value = expected.toFixed(2);
+    
+    // Calculate Balance as Expected Fees minus Fees Paid
+    const balance = expected - feesPaid;
+    document.getElementById("balance").value = balance.toFixed(2);
+  }
+  
+  // Perform an initial recalculation when the page loads
+  window.onload = recalculate;
 </script>
-
 {% endblock %}
